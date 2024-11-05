@@ -8,6 +8,7 @@ output: github_document
 * Hn2453
 * Ryw2109
 * Map2365
+* Mw3845
 
 ### Operational Restrooms Across NYC
 Although public restrooms are readily available to us, they are not always usable. This could be due to malfunctions of the restroom or the entirety of the restroom is closed due to the location being closed for holiday or for the season. Analyzing the available of operational restrooms in NYC may help to prevent individuals from going to public restroom while worrying it may not be available.
