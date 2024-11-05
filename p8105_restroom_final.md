@@ -19,15 +19,6 @@ restroom while worrying it may not be available.
 
 #### The intended final products
 
-Webpage:
-
-- Home page describing the project and data set
-- Second page showing the data visualization comparing operational
-  restrooms of one condition to another
-- Third page mapping out available operational restrooms
-- Fourth page with a report describing any findings or next steps of the
-  project
-
 Our final product will be a comprehensive webpage with four main
 sections: an introduction to the project and dataset, data
 visualizations comparing restroom conditions, an interactive map of
@@ -36,24 +27,7 @@ recommendations. This will allow users to explore restroom accessibility
 and discover patterns in restroom availability across different areas of
 NYC.
 
-#### The anticipated data sources
-
-- NYC Open Data: Public Restrooms
-- NOAA data from the class webpage
-
-#### The planned analyses / visualizations / coding challenges
-
-- Create a data visualization that maps out the operational restrooms
-  for all the locations using the latitude and longitude data available
-  \* Create data visualization that maps out the operational restrooms
-  across the different NYC train stations
-  - This will use both the NYC Open Data and the NOAA data set
-  - This may result in a challenge of finding which column to join the
-    two datasets at
-- Compare the number of operational restrooms based on different
-  restroom locations
-- Compare the number of operational restrooms based on gender and ACA
-  accessibility
+#### The anticipated data sources and planned analyses / visualizations / coding challenges
 
 We will source our data from NYC Open Data on Public Restrooms and the
 NOAA dataset from our class resources. Planned analyses will include
