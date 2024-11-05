@@ -7,7 +7,7 @@ p8105_restroom_final
 - Hn2453
 - Ryw2109
 - Map2365
-- Mw3845
+- Minghe Wang, mw3845
 
 ### Operational Restrooms Across NYC
 
