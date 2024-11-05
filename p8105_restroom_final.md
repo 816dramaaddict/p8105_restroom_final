@@ -39,12 +39,6 @@ analysis.
 
 #### The planned timeline
 
-- Understanding and tidying data set –\> Potentially by the end of
-  11/22/2024
-- Data visualization –\> Potentially by the end of 11/30/2024
-- Webpage –\> Potentially by the end of 12/06/2024
-- Screencast –\> Potentially by the end of 12/12/2024
-
 Our timeline includes completing data tidying by 11/22/2024,
 visualizations by 11/30/2024, the webpage by 12/06/2024, and a recorded
 presentation by 12/12/2024. Our team will collaborate on GitHub for
