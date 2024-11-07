@@ -3,10 +3,10 @@ p8105_restroom_final
 
 ### The group members (names and UNIs)
 
-- Kw3104
-- Hn2453
-- Ryw2109
-- Map2365
+- Carrie Wu, Kw3104
+- Huiyan Ni, Hn2453
+- Rita Wang, Ryw2109
+- Megan Panier, Map2365
 - Minghe Wang, mw3845
 
 ### Operational Restrooms Across NYC
