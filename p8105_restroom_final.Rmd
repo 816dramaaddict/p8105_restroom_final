@@ -6,7 +6,7 @@ output: github_document
 
 * Carrie Wu, Kw3104
 * Huiyan Ni, Hn2453
-* Rita Wang, Ryw2109 :)
+* Rita Wang, Ryw2109
 * Megan Panier, Map2365
 * Minghe Wang, mw3845
 
@@ -21,3 +21,54 @@ We will source our data from NYC Open Data on Public Restrooms and the train sta
 
 #### The planned timeline 
 Our timeline includes completing data tidying by 11/22/2024, visualizations by 11/30/2024, the webpage by 12/06/2024, and a recorded presentation by 12/12/2024. Our team will collaborate on GitHub for proposal creation, using .Rmd to render the document as a GitHub document for submission.
+
+### Data Cleaning
+```{r clean_data}
+# Import data
+restroom_df = read_csv(here::here("./Data/Public_Restrooms_20241203.csv")) %>% 
+  janitor::clean_names()
+subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv")) %>% 
+  janitor::clean_names()
+
+# Clean restroom data
+restroom_df = restroom_df %>% 
+  select(
+    -website, -operator, -hours_of_operation 
+  ) %>% 
+  rename(
+    restroom_latitude = latitude,
+    restroom_longitude = longitude,
+    restroom_location = location
+  ) %>% 
+  mutate(
+    rest_room_latitude = as.numeric(restroom_latitude),
+    rest_room_longitude = as.numeric(restroom_longitude),
+    restroom_location = st_as_sfc(restroom_location), #convert to point
+    open = factor(
+      open,
+      levels = c("Future", "Seasonal", "Year Round"),
+      ordered = TRUE
+    ),
+    accessibility = factor(
+      accessibility,
+      levels = c("Not Accessible", "Partially Accessible", "Fully Accessible"),
+      ordered = TRUE
+    ),
+    changing_stations = case_when(
+      changing_stations %in% c("Yes, in single-stall all gender restroom only",
+                                "Yes, in women's restroom only",
+                                "Yes") ~ 1,
+      changing_stations == "No" ~ 0
+    )
+  ) 
+
+# Convert dataframe to sf for spatial operations
+restroom_sf = st_sf(restroom_df, crs = 4326)
+
+
+
+restroom_near_transit = restroom_df %>% 
+  filter(location_type == 'Transit')
+```
+
+MTA reports that there is 63 out of 423 subway stations provide restrooms 7am - 7pm. And in restroom_df that we imported from NYC Open Data, only `r nrow(restroom_near_transit)` restroom were marked as in the location of subway out of `r nrow(restroom_df) recorded restrooms`.
