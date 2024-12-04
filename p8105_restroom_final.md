@@ -108,13 +108,17 @@ restroom_df = restroom_df %>%
                                 "Yes, in women's restroom only",
                                 "Yes") ~ 1,
       changing_stations == "No" ~ 0
+    ),
+    status = case_when(
+      status %in% c("Operational",
+                    "Closed for Construction",
+                    "Closed") ~ 1,
+      status == "Not Operational" ~ 0
     )
   ) 
 
 # Convert dataframe to sf for spatial operations
 restroom_sf = st_sf(restroom_df, crs = 4326)
-
-
 
 restroom_near_transit = restroom_df %>% 
   filter(location_type == 'Transit')
