@@ -6,7 +6,7 @@ output: github_document
 
 * Carrie Wu, Kw3104
 * Huiyan Ni, Hn2453
-* Rita Wang, Ryw2109
+* Rita Wang, Ryw2109 :)
 * Megan Panier, Map2365
 * Minghe Wang, mw3845
 
