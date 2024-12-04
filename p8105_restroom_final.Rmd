@@ -77,10 +77,10 @@ restroom_df = restroom_df %>%
       changing_stations == "No" ~ 0
     ),
     status = case_when(
-      status %in% c("Operational",
+      status %in% c("Not Operational",
                     "Closed for Construction",
-                    "Closed") ~ 1,
-      status == "Not Operational" ~ 0
+                    "Closed") ~ 0,
+      status == "Operational" ~ 1
     )
   ) 
 
