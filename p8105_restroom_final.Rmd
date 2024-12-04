@@ -23,6 +23,22 @@ We will source our data from NYC Open Data on Public Restrooms and the train sta
 Our timeline includes completing data tidying by 11/22/2024, visualizations by 11/30/2024, the webpage by 12/06/2024, and a recorded presentation by 12/12/2024. Our team will collaborate on GitHub for proposal creation, using .Rmd to render the document as a GitHub document for submission.
 
 ### Data Cleaning
+
+```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
+library(tidyverse)
+library(sf)
+library(ggplot2)
+library(purrr)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_bw() + theme(legend.position = "bottom"))
+```
+
 ```{r clean_data}
 # Import data
 restroom_df = read_csv(here::here("./Data/Public_Restrooms_20241203.csv")) %>% 
@@ -71,4 +87,4 @@ restroom_near_transit = restroom_df %>%
   filter(location_type == 'Transit')
 ```
 
-MTA reports that there is 63 out of 423 subway stations provide restrooms 7am - 7pm. And in restroom_df that we imported from NYC Open Data, only `r nrow(restroom_near_transit)` restroom were marked as in the location of subway out of `r nrow(restroom_df) recorded restrooms`.
+MTA reports that there is 63 out of 423 subway stations provide restrooms 7am - 7pm and in restroom_df that we imported from NYC Open Data, only `r nrow(restroom_near_transit)` restroom were marked as in the location of subway out of `r nrow(restroom_df)` recorded restrooms.
