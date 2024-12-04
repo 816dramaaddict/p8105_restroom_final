@@ -31,12 +31,12 @@ NYC.
 #### The anticipated data sources and planned analyses / visualizations / coding challenges
 
 We will source our data from NYC Open Data on Public Restrooms and the
-NOAA dataset from our class resources. Planned analyses will include
-mapping operational restrooms by location using latitude and longitude,
-visualizing accessibility across NYC train stations, and comparing
-restrooms by accessibility and gender accommodations. A significant
-challenge may be aligning columns from the two datasets for accurate
-analysis.
+train station dataset from our class resources. Planned analyses will
+include mapping operational restrooms by location using latitude and
+longitude, visualizing accessibility across NYC train stations, and
+comparing restrooms by accessibility and gender accommodations. A
+significant challenge may be aligning columns from the two datasets for
+accurate analysis.
 
 #### The planned timeline
 
