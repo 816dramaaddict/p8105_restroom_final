@@ -45,15 +45,15 @@ knitr::opts_chunk$set(
 theme_set(theme_bw() + theme(legend.position = "bottom"))
 ```
 
-```{r clean_data}
+```{r clean_restroom_data}
 # Import data
-restroom_df = read_csv(here::here("./Data/Public_Restrooms_20241203.csv")) %>% 
+restroom_cleaned = read_csv(here::here("./Data/Public_Restrooms_20241203.csv")) %>% 
   janitor::clean_names()
 subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv")) %>% 
   janitor::clean_names()
 
 # Clean restroom data
-restroom_df = restroom_df %>% 
+restroom_cleaned = restroom_cleaned %>% 
   select(
     -website, -operator, -hours_of_operation 
   ) %>% 
@@ -91,15 +91,15 @@ restroom_df = restroom_df %>%
   ) 
 
 # Convert dataframe to sf for spatial operations
-restroom_sf = st_sf(restroom_df, crs = 4326)
+restroom_sf = st_sf(restroom_cleaned, crs = 4326)
 
-restroom_cleaned = restroom_df %>% 
+restroom_df = restroom_cleaned %>% 
   filter(location_type == 'Transit')
 ```
 
 MTA reports that there is 63 out of 423 subway stations provide restrooms 7am - 7pm and in restroom_df that we imported from NYC Open Data, only `r nrow(restroom_cleaned)` restroom were marked as in the location of subway out of `r nrow(restroom_df)` recorded restrooms.
 
-```{r clean_subway}
+```{r clean_subway_data}
 # Load the dataset
 subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv"))
 
@@ -118,10 +118,6 @@ subway_cleaned = subway_df %>%
     station_longitude = as.numeric(station_longitude)
   )
 ```
-```{r }
-
-```
-
 
 ```{r mapping_subway_station_location}
 leaflet(data = subway_cleaned) %>%
@@ -153,3 +149,52 @@ leaflet(data = subway_cleaned) %>%
       )
     )
 ```
+
+```{r predicting_ada_prep}
+subway_cleaned = subway_cleaned %>%
+  mutate(
+    station_latitude = as.numeric(station_latitude),
+    station_longitude = as.numeric(station_longitude)
+  )
+
+  # Subway data to spatial df
+subway_sf = subway_cleaned %>%
+  st_as_sf(coords = c("station_longitude", "station_latitude"), crs = 4326)
+
+restroom_subway_join = st_join(restroom_sf, subway_sf, join = st_is_within_distance, dist = 100) # merging the two data sets
+
+# Cleaning merged data
+restroom_subway_data = restroom_subway_join %>%
+  select(
+    restroom_latitude, restroom_longitude, 
+    restroom_location, open, accessibility, 
+    changing_stations, status, location_type, 
+    station_name, ada, entry, exit_only, vending
+  ) %>%
+  mutate(
+    # Convert ada and other categorical variables to factors
+    open = factor(open, levels = c("Future", "Seasonal", "Year Round"), ordered = TRUE),
+    accessibility = factor(accessibility, levels = c("Not Accessible", "Partially Accessible", "Fully Accessible"), ordered = TRUE),
+    changing_stations = factor(changing_stations, levels = c(0, 1)),
+    ada = factor(ada, levels = c("Yes", "No"))
+  )
+```
+
+```{r predicting_ada_distance}
+distance_matrix = st_distance(restroom_sf, subway_sf)  # Distances between restrooms and all subway stations
+
+distance_to_nearest_subway = apply(distance_matrix, 1, function(x) min(x, na.rm = TRUE))
+ # Distance of nearest subway station from restroom
+
+if(length(distance_to_nearest_subway) != nrow(restroom_subway_data)) {
+  distance_to_nearest_subway[is.na(distance_to_nearest_subway)] = Inf
+}
+
+restroom_subway_data = restroom_subway_data %>%
+  mutate(distance_to_subway = distance_to_nearest_subway)
+```
+
+```{r predicting_ada_visuals}
+
+```
+
