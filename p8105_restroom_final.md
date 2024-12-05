@@ -90,8 +90,8 @@ restroom_df = restroom_df %>%
     restroom_location = location
   ) %>% 
   mutate(
-    rest_room_latitude = as.numeric(restroom_latitude),
-    rest_room_longitude = as.numeric(restroom_longitude),
+    restroom_latitude = as.numeric(restroom_latitude),
+    restroom_longitude = as.numeric(restroom_longitude),
     restroom_location = st_as_sfc(restroom_location), #convert to point
     open = factor(
       open,
@@ -110,10 +110,10 @@ restroom_df = restroom_df %>%
       changing_stations == "No" ~ 0
     ),
     status = case_when(
-      status %in% c("Operational",
+      status %in% c("Not Operational",
                     "Closed for Construction",
-                    "Closed") ~ 1,
-      status == "Not Operational" ~ 0
+                    "Closed") ~ 0,
+      status == "Operational" ~ 1
     )
   ) 
 
@@ -128,3 +128,37 @@ MTA reports that there is 63 out of 423 subway stations provide
 restrooms 7am - 7pm and in restroom_df that we imported from NYC Open
 Data, only 5 restroom were marked as in the location of subway out of
 1047 recorded restrooms.
+
+``` r
+# Load the dataset
+subway_df <- read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv"))
+```
+
+    ## Rows: 1868 Columns: 32
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (22): Division, Line, Station Name, Route1, Route2, Route3, Route4, Rout...
+    ## dbl  (8): Station Latitude, Station Longitude, Route8, Route9, Route10, Rout...
+    ## lgl  (2): ADA, Free Crossover
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+# Clean the dataset
+subway_cleaned <- subway_df |>
+  janitor::clean_names() |> 
+  select(
+    line, station_name, station_latitude, station_longitude, 
+    route1, route2, route3, route4, route5, route6, 
+    route7, route8, route9, route10, route11, 
+    entry, exit_only, vending, entrance_type, ada
+  ) |> 
+  mutate(across(starts_with("route"), ~ replace_na(as.character(.), ""))) |>
+   mutate(
+    station_latitude = as.numeric(station_latitude),
+    station_longitude = as.numeric(station_longitude)
+  )
+```
+
+\`\`\`

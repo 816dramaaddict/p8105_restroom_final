@@ -6,7 +6,7 @@ output: github_document
 
 * Carrie Wu, Kw3104
 * Huiyan Ni, Hn2453
-* Rita Wang, Ryw2109 :)
+* Rita Wang, Ryw2109
 * Megan Panier, Map2365
 * Minghe Wang, mw3845
 
@@ -29,6 +29,12 @@ library(tidyverse)
 library(sf)
 library(ggplot2)
 library(purrr)
+library(tidyverse)
+library(dplyr)
+library(janitor)
+library(here)
+library(leaflet)
+library(reader)
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -57,8 +63,8 @@ restroom_df = restroom_df %>%
     restroom_location = location
   ) %>% 
   mutate(
-    rest_room_latitude = as.numeric(restroom_latitude),
-    rest_room_longitude = as.numeric(restroom_longitude),
+    restroom_latitude = as.numeric(restroom_latitude),
+    restroom_longitude = as.numeric(restroom_longitude),
     restroom_location = st_as_sfc(restroom_location), #convert to point
     open = factor(
       open,
@@ -87,8 +93,59 @@ restroom_df = restroom_df %>%
 # Convert dataframe to sf for spatial operations
 restroom_sf = st_sf(restroom_df, crs = 4326)
 
-restroom_near_transit = restroom_df %>% 
+restroom_cleaned = restroom_df %>% 
   filter(location_type == 'Transit')
 ```
 
-MTA reports that there is 63 out of 423 subway stations provide restrooms 7am - 7pm and in restroom_df that we imported from NYC Open Data, only `r nrow(restroom_near_transit)` restroom were marked as in the location of subway out of `r nrow(restroom_df)` recorded restrooms.
+MTA reports that there is 63 out of 423 subway stations provide restrooms 7am - 7pm and in restroom_df that we imported from NYC Open Data, only `r nrow(restroom_cleaned)` restroom were marked as in the location of subway out of `r nrow(restroom_df)` recorded restrooms.
+
+```{r clean_subway}
+# Load the dataset
+subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv"))
+
+# Clean the dataset
+subway_cleaned = subway_df %>% 
+  janitor::clean_names() %>% 
+  select(
+    line, station_name, station_latitude, station_longitude, 
+    route1, route2, route3, route4, route5, route6, 
+    route7, route8, route9, route10, route11, 
+    entry, exit_only, vending, entrance_type, ada
+  ) %>%  
+  mutate(across(starts_with("route"), ~ replace_na(as.character(.), ""))) %>% 
+   mutate(
+    station_latitude = as.numeric(station_latitude),
+    station_longitude = as.numeric(station_longitude)
+  )
+```
+
+```{r mapping_subway_station_location}
+leaflet(data = subway_cleaned) %>%
+  addTiles() %>% 
+  addCircleMarkers(
+    lng = ~station_longitude, lat = ~station_latitude, 
+    label = ~station_name, # Station name as a label
+    popup = ~paste("Line:", line, "<br>", "ADA Accessible:", ada), 
+    radius = 5, color = "blue", fillOpacity = 0.7
+  )
+```
+
+```{r mapping_restroom_location}
+  leaflet(data = restroom_cleaned) %>%
+    addTiles() %>% 
+    addMarkers(
+      lng = ~restroom_longitude,
+      lat = ~restroom_latitude,
+      label = ~facility_name,
+      popup = ~paste0(
+        "<b>Restroom:</b> ", facility_name, "<br>",
+        "<b>Location:</b> ", restroom_location, "<br>",
+        "<b>Accessibility:</b> ", accessibility
+      ),
+      icon = makeIcon(
+        iconUrl = "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png",
+        iconWidth = 20,
+        iconHeight = 30
+      )
+    )
+```
