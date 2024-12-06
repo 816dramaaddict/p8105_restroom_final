@@ -1,0 +1,27 @@
+---
+title: "Clutser Accessibility of Subway Stations"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# How Accessible Subways Are?
+
+### Are there ADA compliances?
+
+### Are there staffs?
+
+### Are there free crossovers?
+
+### What are their entrance types?
+
+# Rank Subway's Accessibility
+
+### When NOT considering restroom access,
+
+### When considering restroom access,
