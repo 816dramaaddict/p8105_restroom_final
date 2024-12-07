@@ -117,7 +117,7 @@ restroom_near_transit <- restroom_cleaned %>%
 subway_with_restrooms <- st_join(subway_sf, restroom_sf, join = st_nearest_feature)
 ```
 
-For restroom data, we factor the character variables (`status`, `open`, `accessibility`, `changing_stations`) into binary and categorical variables. We handle NAs in `status` and `changing_stations` by assigning 0, and `open`, `accessibility` by adding explicity NA level `'Unknown'`
+For restroom data, we factor the character variables (`status`, `open`, `accessibility`, `changing_stations`) into binary and categorical variables. We handle NAs in `status` and `changing_stations` by assigning 0, NAs in the rest variables will be handled specific to each analysis.
 
 After cleaning, `restroom_cleaned` contains `r nrow(restroom_cleaned)` rows and `r ncol(restroom_cleaned)` columns.
 
