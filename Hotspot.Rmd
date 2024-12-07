@@ -1,13 +1,11 @@
 ---
-title: "Hotspot"
+title: "Hot Spot Analysis (Getis-Ord Gi)"
 output: 
   html_document:
     code_folding: hide
     toc: true
     toc_float: true
 ---
-
-### Data Cleaning
 
 ```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
 library(tidyverse)
@@ -130,23 +128,8 @@ subway_with_restrooms = st_join(subway_sf, restroom_sf, join = st_nearest_featur
 ```
 
 
-### Hotspot Analysis
-
-underserverd subway stations
-```{r}
-# Calculate distances between restrooms and subway entrances
-subway_restroom_dist <- st_distance(subway_sf, restroom_sf)
-
-# Identify underserved areas (e.g., areas without restrooms within 500m)
-underserved_subway <- subway_sf %>%
-  mutate(min_distance = apply(subway_restroom_dist, 1, min)) %>%
-  filter(min_distance > 500)
-
-```
-There are 272 stations without restrooms within 500m. 
-
-## Hot Spot Analysis (Getis-Ord Gi):
 Hot Spot Analysis using the Getis-Ord Gi* statistic is a spatial statistical method used to identify statistically significant clusters (hot spots or cold spots) of high or low values in geographic data. This technique helps determine areas where a phenomenon (e.g., restroom accessibility) is unusually concentrated or sparse.
+
 ```{r}
 # Step 1: Load ZIP Code Shapefile
 zip_shapes <- st_read("./NYC/zipcode.shp") %>%
@@ -273,25 +256,33 @@ Neutral areas (light colors) suggest no significant clustering, reflecting avera
 Cold spots or areas with no data (gray) are observed in regions like Staten Island and some peripheral areas, highlighting gaps in restroom density or missing data requiring further investigation.
 
 
-Top 5 ZIP Codes by Density
 ```{r}
-# Extract Top 5 ZIP Codes by Density
-top_5_density <- zip_shapes %>%
-  st_drop_geometry() %>%  # Drop geometry for a cleaner table
-  arrange(desc(density)) %>%  # Sort by density in descending order
-  slice_head(n = 5)  # Select the top 5 rows
+# Calculate distances between restrooms and subway entrances
+subway_restroom_dist <- st_distance(subway_sf, restroom_sf)
 
-# Display the Top 5 Table
-top_5_density %>%
-  select(zip_code, restroom_count, area_km2, density) %>%
+# Identify underserved areas (e.g., areas without restrooms within 500m)
+underserved_subway <- subway_sf %>%
+  mutate(min_distance = apply(subway_restroom_dist, 1, min)) %>%
+  filter(min_distance > 500)
+# Select a sample of 5 underserved subway stations
+underserved_sample <- underserved_subway %>%
+  st_drop_geometry() %>%  # Drop geometry for table creation
+  select(station_name, line, station_latitude, station_longitude, min_distance) %>%
+  slice_head(n = 5)  # Get the first 5 rows
+
+# Create a table
+library(knitr)
+underserved_sample %>%
+  mutate(
+    min_distance = round(min_distance, 2)  # Round distances for readability
+  ) %>%
   kable(
-    caption = "Top 5 ZIP Codes by Restroom Density",
-    col.names = c("ZIP Code", "Restroom Count", "Area (km²)", "Density (Restrooms/km²)"),
+    caption = "Sample of 5 Underserved Subway Stations",
+    col.names = c("Station Name", "Line", "Latitude", "Longitude", "Min Distance to Restroom (m)"),
     digits = 2
   )
 ```
-The table shows the top 5 ZIP codes with the highest restroom densities in NYC, with ZIP code 10282 leading at 12.01 restrooms per square kilometer, likely reflecting its small area and relatively high restroom count. Other ZIP codes such as 11109, 10022, 10004, and 10017 also show high restroom densities, emphasizing well-served areas, potentially due to higher population or visitor traffic.
-
+There are 272 stations without restrooms within 500m. 
 
 ```{r}
 interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway, zip_shapes) {
