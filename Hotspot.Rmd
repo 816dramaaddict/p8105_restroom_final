@@ -127,18 +127,6 @@ subway_with_restrooms = st_join(subway_sf, restroom_sf, join = st_nearest_featur
 ```
 
 
-
-```{r zipcode_clean, echo = FALSE, message = FALSE, warning = FALSE}
-# Download from US Census Bureau
-county_shapes <- st_read("./NYC/tl_2023_us_county.shp")
-
-# Filter NYC counties using FIPS codes
-nyc_counties <- county_shapes %>%
-  filter(STATEFP == "36" & COUNTYFP %in% c("005", "047", "061", "081", "085"))
-
-```
-
-
 ### Hotspot Analysis
 
 underserverd subway stations
@@ -157,7 +145,7 @@ There are 272 stations without restrooms within 500m.
 calculate the density of restroom in each zipcode
 ```{r}
 # Load the shapefile
-zip_shapes <- st_read("./NYC/nyc.shp") %>%
+zip_shapes <- st_read("./NYC/zipcode.shp") %>%
   st_transform(zip_shapes, crs = 4326)
 
 # Calculate area in square kilometers
