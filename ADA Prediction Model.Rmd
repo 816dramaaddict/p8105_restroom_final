@@ -6,6 +6,9 @@ output:
     toc: true
     toc_float: true
 ---
+# Introduction
+
+Ensuring ADA-accessible restrooms in NYC's subway system is essential for inclusivity. This page highlights key factors influencing restroom accessibility, using predictive modeling to identify trends and opportunities for improvement.
 
 ```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
 library(sf)
