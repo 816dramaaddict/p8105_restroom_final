@@ -164,7 +164,7 @@ subway_cleaned %>%
 
 ```{r}
 # Convert binary variable to factors
-subway_cleaned = subway_cleaned %>% 
+subway_cleaned <- subway_cleaned %>% 
   mutate(
     ada <- factor(ada, levels = c("FALSE", "TRUE")),
     free_crossover <- factor(free_crossover, levels = c("FALSE", "TRUE"))
@@ -198,59 +198,6 @@ cluster_profiles <- clustering_data %>%
 
 knitr::kable(cluster_profiles)
 
-
-# print(cluster_profiles)
-
-# subway_cleaned_with_clusters <- subway_cleaned %>%
-#   mutate(cluster = km_result$cluster)
-# 
-# # 2. Inspect cluster modes (the "central" values of each cluster)
-# modes_df <- as.data.frame(km_result$modes)
-# modes_df$cluster <- 1:nrow(modes_df)
-# modes_df <- modes_df %>% select(cluster, everything())
-# 
-# # Display cluster modes in a nice table
-# kable(modes_df, caption = "Cluster Modes") %>%
-#   kable_styling(full_width = FALSE)
-# 
-# # 3. Summarize the distribution of a key variable (e.g., entrance_type) across clusters
-# entrance_distribution <- subway_cleaned_with_clusters %>%
-#   count(cluster, entrance_type) %>%
-#   group_by(cluster) %>%
-#   mutate(prop = n / sum(n))
-# 
-# # Display as a table
-# kable(entrance_distribution, caption = "Entrance Type Distribution by Cluster") %>%
-#   kable_styling(full_width = FALSE)
-# 
-# # 4. Visualize the distribution of entrance_type by cluster
-# ggplot(entrance_distribution, aes(x = factor(cluster), y = prop, fill = entrance_type)) +
-#   geom_col(position = "dodge") +
-#   scale_fill_viridis_d() +
-#   labs(
-#     title = "Distribution of Entrance Types by Cluster",
-#     x = "Cluster",
-#     y = "Proportion",
-#     fill = "Entrance Type"
-#   ) +
-#   theme_minimal()
-# 
-# # 5. Similarly, visualize another variable, such as staffing, by cluster
-# staffing_distribution <- subway_cleaned_with_clusters %>%
-#   count(cluster, staffing) %>%
-#   group_by(cluster) %>%
-#   mutate(prop = n / sum(n))
-# 
-# ggplot(staffing_distribution, aes(x = factor(cluster), y = prop, fill = staffing)) +
-#   geom_col(position = "dodge") +
-#   scale_fill_viridis_d() +
-#   labs(
-#     title = "Distribution of Staffing Levels by Cluster",
-#     x = "Cluster",
-#     y = "Proportion",
-#     fill = "Staffing"
-#   ) +
-#   theme_minimal()
 ```
 
 ```{r}
@@ -298,14 +245,36 @@ leaflet() |>
 ### When considering restroom access,
 
 ```{r}
-subway_with_restroom = read_csv("Data/cleaned_subway_restroom_data.csv") %>% 
+subway_with_restroom = read_csv("Data/cleaned_subway_restroom_data.csv")
+
+subway_with_restroom <- subway_with_restroom %>% 
   mutate(
-    ada <- factor(ada, levels = c("FALSE", "TRUE")),
-    free_crossover <- factor(free_crossover, levels = c("FALSE", "TRUE")),
-    # restroom_status <- factor(restroom_status, levels = c("FALSE", "TRUE")),
-    # restroom_changing_stations <- factor(restroom_changing_stations, levels = c("FALSE", "TRUE"))
-    restroom_changing_stations <- case_when(
-      restroom_changing_stations == NA ~ 0
+    ada = factor(ada, levels = c("FALSE", "TRUE")),
+    free_crossover = factor(free_crossover, levels = c("FALSE", "TRUE")),
+    #convert to categorical
+    restroom_changing_stations = factor(
+      restroom_changing_stations,
+      levels = c(0, 1),
+      labels = c("FALSE", "TRUE")
+    ),
+    restroom_status = factor(
+      restroom_status,
+      levels = c(0, 1),
+      labels = c("FALSE", "TRUE")
+    ),
+    restroom_accessibility = fct_explicit_na(restroom_accessibility, na_level = "Unknown"),
+    restroom_open = fct_explicit_na(restroom_open, na_level = "Unknown")
+  ) %>% 
+    mutate(
+    entrance_type = factor(
+      entrance_type,
+      levels = c("Stair", "Easement", "Door", "Walkway", "Escalator", "Ramp", "Elevator")
+    )
+  ) %>% 
+  mutate(
+    staffing = factor(
+      staffing,
+      levels = c("NONE", "Spc Ev", "PART", "FULL")
     )
   )
 
@@ -317,7 +286,7 @@ clustering_merged_data <- subway_with_restroom %>%
 set.seed(123)  # For reproducibility
 km_result2 <- clustering_merged_data %>% 
   dplyr::select(-station_latitude, -station_longitude, -station_name) %>% 
-  kmodes(modes = 3, iter.max = 10)
+  klaR::kmodes(modes = 3, iter.max = 10)
 
 clustering_merged_data$.cluster <- factor(km_result2$cluster)
 
