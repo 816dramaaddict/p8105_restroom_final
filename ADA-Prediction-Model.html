@@ -1570,7 +1570,53 @@ border-radius: 0px;
 </div>
 
 
+<pre class="r"><code>library(sf)
+library(purrr)
+library(tidyverse)
+library(dplyr)
+library(janitor)
+library(here)
+library(reader)
+library(nnet)
+library(knitr)</code></pre>
+<pre class="r"><code>restroom_subway_join = read_csv(here::here(&quot;./Data/cleaned_subway_restroom_data.csv&quot;))</code></pre>
+<pre class="r"><code># Cleaning merged data
+restroom_subway_data = restroom_subway_join %&gt;%
+  dplyr::select(
+    restroom_accessibility,
+      # Dependent variable (ADA accessibility)
+    restroom_latitude, restroom_longitude,
+      # Restroom location features
+    restroom_changing_stations, restroom_open,
+      # Restroom other features
+    station_latitude, station_longitude,
+      # Subway station location features
+    entrance_type, staffing
+      # Subway station other features
+  ) %&gt;%
+  drop_na() %&gt;% 
+  mutate(
+    restroom_accessibility = as.factor(as.character(restroom_accessibility)), 
+      # str(restroom_subway_data$restroom_accessibility)
+        # confirming if restroom_accessibility is no longer ordered
+    restroom_accessibility = relevel(restroom_accessibility, ref = &quot;Not Accessible&quot;),
+    restroom_open = as.factor(restroom_open),
+    entrance_type = as.factor(entrance_type),
+    staffing = as.factor(staffing)
+  )</code></pre>
+<pre class="r"><code># Multinomial logistic regression model
+ada_model = multinom(restroom_accessibility ~ restroom_latitude + restroom_longitude +
+                       restroom_changing_stations + restroom_open +
+                       station_latitude + station_longitude + 
+                       entrance_type + staffing,
+                     data = restroom_subway_data)
+
+# Check the model summary
+summary(ada_model)</code></pre>
 <p><strong>Model Summary Table</strong></p>
+<pre class="r"><code>table = head(broom::tidy(ada_model), 31)
+colnames(table) = c(&quot;Accessibility Level with Reference to No Accessibility&quot;, &quot;Predictors&quot;, &quot;Coefficients&quot;, &quot;Standard Error&quot;, &quot;Test Statistic&quot;, &quot;P-Value&quot;)
+knitr::kable(table)</code></pre>
 <table>
 <colgroup>
 <col width="40%" />
@@ -1845,6 +1891,14 @@ high p-values, indicating weak evidence of their association with a
 restroom being fully ADA accessible. Potential multicollinearity or
 insufficient data may have resulted in very large or null statistical
 values on escalator entrance type and ramp entrance type.</p>
+<pre class="r"><code>predicted_accessibility = predict(ada_model, restroom_subway_data)
+
+# Confusion Matrix to evaluate the model&#39;s performance
+table(Predicted = predicted_accessibility, Actual = restroom_subway_data$restroom_accessibility)
+
+# Calculate accuracy
+accuracy = mean(predicted_accessibility == restroom_subway_data$restroom_accessibility) * 100
+accuracy = print(paste(accuracy, &quot;%&quot;))</code></pre>
 <p><strong>Accuracy:</strong></p>
 <p>When testing the prediction model on the public restroom and train
 station data, there is an approximate of 73.0337078651685 % accuracy,
