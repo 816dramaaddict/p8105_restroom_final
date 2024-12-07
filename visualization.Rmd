@@ -1,0 +1,268 @@
+---
+title: "visualization_plots"
+author: "Huiyan Ni"
+date: "2024-12-07"
+output: html_document
+---
+```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
+library(tidyverse)
+library(sf)
+library(ggplot2)
+library(purrr)
+library(tidyverse)
+library(dplyr)
+library(janitor)
+library(here)
+library(leaflet)
+library(reader)
+library(plotly)
+library(knitr)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_bw() + theme(legend.position = "bottom"))
+```
+
+```{r clean_restroom_data}
+# Import data
+restroom_cleaned = read_csv(here::here("./Data/Public_Restrooms_20241203.csv")) %>% 
+  janitor::clean_names()
+subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv")) %>% 
+  janitor::clean_names()
+
+# Clean restroom data
+restroom_cleaned = restroom_cleaned %>% 
+  select(
+    -website, -operator, -hours_of_operation 
+  ) %>% 
+  rename(
+    restroom_latitude = latitude,
+    restroom_longitude = longitude,
+    restroom_location = location
+  ) %>% 
+  mutate(
+    restroom_latitude = as.numeric(restroom_latitude),
+    restroom_longitude = as.numeric(restroom_longitude),
+    restroom_location = st_as_sfc(restroom_location), #convert to point
+    open = factor(
+      open,
+      levels = c("Future", "Seasonal", "Year Round"),
+      ordered = TRUE
+    ),
+    accessibility = factor(
+      accessibility,
+      levels = c("Not Accessible", "Partially Accessible", "Fully Accessible"),
+      ordered = TRUE
+    ),
+    changing_stations = case_when(
+      changing_stations %in% c("Yes, in single-stall all gender restroom only",
+                                "Yes, in women's restroom only",
+                                "Yes") ~ 1,
+      changing_stations == "No" ~ 0
+    ),
+    status = case_when(
+      status %in% c("Not Operational",
+                    "Closed for Construction",
+                    "Closed") ~ 0,
+      status == "Operational" ~ 1
+    )
+  ) 
+
+# Convert dataframe to sf for spatial operations
+restroom_sf = st_sf(restroom_cleaned, crs = 4326)
+
+restroom_df = restroom_cleaned %>% 
+  filter(location_type == 'Transit')
+```
+
+
+```{r clean_subway_data}
+# Load the dataset
+subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv"))
+
+# Clean the dataset
+subway_cleaned = subway_df %>% 
+  janitor::clean_names() %>% 
+  select(
+    line, station_name, station_latitude, station_longitude, 
+    route1, route2, route3, route4, route5, route6, 
+    route7, route8, route9, route10, route11, 
+    entry, exit_only, vending, entrance_type, ada
+  ) %>%  
+  mutate(across(starts_with("route"), ~ replace_na(as.character(.), ""))) %>% 
+   mutate(
+    station_latitude = as.numeric(station_latitude),
+    station_longitude = as.numeric(station_longitude)
+  )
+```
+
+
+## restroom
+```{r restroom location_type barplot}
+restroom_location_bar = restroom_cleaned |> 
+  group_by(location_type) |> 
+  count(location_type) |> 
+  mutate(loation_type = fct_reorder(location_type, n)) |> 
+  plot_ly (x = ~location_type, y = ~n, color = ~location_type,
+           type = "bar") |> 
+  layout(
+    xaxis = list(title = "Location Type"),   
+    yaxis = list(title = "Number of Restrooms") 
+  )
+
+ restroom_location_bar
+```
+
+
+
+```{r restroom open}
+restroom_open_bar = restroom_cleaned |> 
+  filter(!is.na(open))|>
+  group_by(open) |> 
+  count(open, name = "n") |> 
+  ungroup()|>
+  mutate(open = fct_reorder(open, n)) |> 
+  plot_ly (x = ~open, y = ~n, color = ~open,
+           type = "bar") |> 
+  layout(
+    xaxis = list(title = "Open Type"),   
+    yaxis = list(title = "Number of Restrooms") 
+  )
+
+ restroom_open_bar
+
+```
+
+
+```{r}
+location_type_open <- 
+  restroom_cleaned |> 
+  filter(!is.na(open)) |> 
+  filter(!is.na(location_type))|>
+  group_by(location_type, open) |> 
+  summarise(count = n(),.groups="drop") |> 
+  group_by(open)|>
+  mutate(percent = round(count / sum(count) * 100, 1))
+ 
+
+location_type_open |>
+  mutate(hover_text = str_c("Open: ", open, 
+                            "<br>Location Type: ", location_type, 
+                            "<br>Percent: ", percent, "%")) |> 
+  plot_ly(
+    x = ~open, 
+    y = ~percent, 
+    color = ~location_type,
+    type = "bar", 
+    colors = "viridis", 
+    text = ~hover_text, 
+    hoverinfo = "text"
+  )|>
+  layout(
+    xaxis = list(title = "Open"),   
+    yaxis = list(title = "Percent of Restroom (%)"))
+```
+
+
+From the plot, we can get that the open type is related to location type. All future open-status restrooms are located in library. All seasonal open-status restrooms are located in park.  
+
+```{r restroom accessibility}
+restroom_accessibility_bar = restroom_cleaned |> 
+  filter(!is.na(accessibility))|>
+  group_by(accessibility) |> 
+  count(accessibility, name = "n") |> 
+  ungroup()|>
+  mutate(accessibility = fct_reorder(accessibility, n)) |> 
+  plot_ly (x = ~accessibility, y = ~n, color = ~accessibility,
+           type = "bar") |> 
+  layout(
+    xaxis = list(title = "Accessibility Type"),   
+    yaxis = list(title = "Number of Restrooms") 
+  )
+
+ restroom_accessibility_bar
+```
+
+```{r restroom type}
+restroom_type_bar = restroom_cleaned |> 
+  filter(!is.na(restroom_type))|>
+  group_by(restroom_type) |> 
+  count(restroom_type, name = "n") |> 
+  ungroup()|>
+  mutate(restroom_type = fct_reorder(restroom_type, n)) |> 
+  plot_ly (x = ~restroom_type, y = ~n, color = ~restroom_type,
+           type = "bar") |> 
+  layout(
+    xaxis = list(title = "Restroom Type"),   
+    yaxis = list(title = "Number of Restrooms") 
+  )
+
+ restroom_type_bar
+
+```
+
+## subway
+```{r subway vending}
+subway_vending_bar = subway_cleaned |> 
+  group_by(vending) |> 
+  count(vending, name = "n") |> 
+  mutate(vending = fct_reorder(vending, n)) |> 
+  plot_ly (x = ~vending, y = ~n, color = ~vending, colors = "viridis",
+           type = "bar") |> 
+  layout(
+    xaxis = list(title = "Subway Vending"),   
+    yaxis = list(title = "Number of Subway Stations") 
+  )
+
+ subway_vending_bar
+
+```
+
+
+```{r subway entrance_type}
+subway_entrance_bar = subway_cleaned |> 
+  group_by(entrance_type) |> 
+  count(entrance_type, name = "n") |> 
+  mutate(entrance_type = fct_reorder(entrance_type, n)) |> 
+  plot_ly (x = ~entrance_type, y = ~n, color = ~entrance_type, colors = "viridis",
+           type = "bar") |> 
+  layout(
+    xaxis = list(title = "Subway Entrance Type"),   
+    yaxis = list(title = "Number of Subway Stations") 
+  )
+
+ subway_entrance_bar
+
+```
+
+```{r }
+entrance_type_ada <- 
+  subway_cleaned |> 
+  group_by(entrance_type, ada) |> 
+  summarise(count = n(),.groups="drop") |> 
+  group_by(entrance_type)|>
+  mutate(percent = round(count / sum(count) * 100, 1))
+
+entrance_type_ada |>
+  mutate(hover_text = str_c("Entrance Type: ", entrance_type, 
+                            "<br>Ada: ", ada, 
+                            "<br>Percent: ", percent, "%")) |> 
+  plot_ly(
+    x = ~entrance_type, 
+    y = ~percent, 
+    color = ~ada,
+    type = "bar", 
+    colors = "viridis", 
+    text = ~hover_text, 
+    hoverinfo = "text"
+  )|>
+  layout(
+    xaxis = list(title = "Entrance Type"),   
+    yaxis = list(title = "Percent of Subway Stations (%)"))
+```
+
+This plot show the relationship between entrance type of subway stations and their ada. The stations with walkway or elevator entrances are more likely to be considered true in ada, while stations with door, ramp, or stair entrances are more likely to be considered false in ada. 
