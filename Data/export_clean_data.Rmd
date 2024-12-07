@@ -81,13 +81,11 @@ restroom_cleaned <- restroom_dirty %>%
     restroom_longitude = as.numeric(restroom_longitude),
     restroom_open = factor(
       open,
-      levels = c("Future", "Seasonal", "Year Round"),
-      ordered = TRUE
+      levels = c("Future", "Seasonal", "Year Round")
     ),
     restroom_accessibility = factor(
       accessibility,
-      levels = c("Not Accessible", "Partially Accessible", "Fully Accessible"),
-      ordered = TRUE
+      levels = c("Not Accessible", "Partially Accessible", "Fully Accessible")
     ),
     restroom_changing_stations = case_when(
       changing_stations %in% c("Yes, in single-stall all gender restroom only",
