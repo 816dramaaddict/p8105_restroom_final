@@ -1,5 +1,5 @@
 ---
-title: "Multiple Logistic Regression"
+title: "ADA Accessibility Prediction"
 author: "Rita Wang"
 date: "2024-12-07"
 output: github_document
@@ -39,8 +39,8 @@ subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Dat
 
 # Clean restroom data
 restroom_cleaned = restroom_cleaned %>% 
-  select(
-    -website, -operator, -hours_of_operation 
+  dplyr::select(
+    -operator, -hours_of_operation, -website
   ) %>% 
   rename(
     restroom_latitude = latitude,
@@ -81,8 +81,6 @@ restroom_sf = st_sf(restroom_cleaned, crs = 4326)
 restroom_df = restroom_cleaned %>% 
   filter(location_type == 'Transit')
 ```
-
-MTA reports that there is 63 out of 423 subway stations provide restrooms 7am - 7pm and in restroom_df that we imported from NYC Open Data, only `r nrow(restroom_cleaned)` restroom were marked as in the location of subway out of `r nrow(restroom_df)` recorded restrooms.
 
 ```{r clean_subway_data, echo = FALSE, message = FALSE, warning = FALSE}
 # Load the dataset
@@ -152,7 +150,7 @@ restroom_subway_data = restroom_subway_join %>%
   )
 ```
 
-```{r predicting_model, echo = FALSE, message = FALSE, warning = FALSE}
+```{r predicting_model, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
 # Multinomial logistic regression model
 ada_model = multinom(restroom_accessibility ~ restroom_latitude + restroom_longitude +
                        restroom_changing_stations + restroom_open +
@@ -164,16 +162,26 @@ ada_model = multinom(restroom_accessibility ~ restroom_latitude + restroom_longi
 summary(ada_model)
 ```
 
-```{r testing_model, echo = FALSE, message = FALSE, warning = FALSE}
+**Fully accessible model:**
+
+_fully ADA accessible_ = 13.09322 + (-44.518986 x restroom_latitude) + (-51.73608 x restroom_longitude) + (0.6882738 x restroom_changing_stations) + (9.258301 x restroom_open.L) + (5.345283 x restroom_open.Q) + (45.850648 x station_latitude) + (52.89934 x station_longitude) + (19.29844 x entrance_type4) + (25.222168 x entrance_type5) + (32.24590 x entrance_type6) + (15.90470 x entrance_type7) + (3.510139 x staffing.L) + (-6.005553 x staffing.Q) + (-8.185782 x staffing.C)
+
+**Partially accessible model:**
+
+_partially ADA accessible_ = 16.87786 + (6.597743 x restroom_latitude) + (-42.09849 x restroom_longitude) + (-0.2384599 x restroom_changing_stations) + (11.934446 x restroom_open.L) + (6.890356 x restroom_open.Q) + (-6.401506 x station_latitude) + (42.45565 x station_longitude) + (-12.21631 x entrance_type4) + (-7.487845 x entrance_type5) + (-26.49563 x entrance_type6) + (-17.85312 x entrance_type7) + (-2.186729 x staffing.L) + (19.399016 x staffing.Q) + (7.440258 x staffing.C)
+
+```{r testing_model, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
 predicted_accessibility = predict(ada_model, restroom_subway_data)
 
 # Confusion Matrix to evaluate the model's performance
 table(Predicted = predicted_accessibility, Actual = restroom_subway_data$restroom_accessibility)
 
 # Calculate accuracy
-accuracy = mean(predicted_accessibility == restroom_subway_data$restroom_accessibility)
-print(paste("Accuracy: ", accuracy))
+accuracy = mean(predicted_accessibility == restroom_subway_data$restroom_accessibility) * 100
+accuracy = print(paste(accuracy, "%"))
 ```
+
+When testing the prediction model on the public restroom and train station data, there is an approximate of `r accuracy`.
 
 ```{r model_visual, echo = FALSE, message = FALSE, warning = FALSE}
 # # Predicted classes
