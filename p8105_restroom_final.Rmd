@@ -35,6 +35,10 @@ library(janitor)
 library(here)
 library(leaflet)
 library(reader)
+library(nnet)
+# library(caret)
+# library(pheatmap)
+library(pROC)
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -136,8 +140,6 @@ subway_cleaned = subway_df %>%
 
 # Convert subway data to sf object
 subway_sf = st_sf(subway_cleaned, crs = 4326)
-
-subway_with_restrooms = st_join(subway_sf, restroom_sf, join = st_nearest_feature)
 ```
 
 
@@ -170,8 +172,8 @@ leaflet(data = subway_cleaned) %>%
       ),
       icon = makeIcon(
         iconUrl = "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png",
-        iconWidth = 20,
-        iconHeight = 30
+        iconWidth = 10,
+        iconHeight = 15
       )
     )
 ```
@@ -189,50 +191,71 @@ leaflet(data = subway_cleaned) %>%
 
 
 ```{r predicting_ada_prep, echo = FALSE, message = FALSE, warning = FALSE}
-subway_cleaned = subway_cleaned %>%
-  mutate(
-    station_latitude = as.numeric(station_latitude),
-    station_longitude = as.numeric(station_longitude)
-  )
-
-  # Subway data to spatial df
-subway_sf = subway_cleaned %>%
-  st_as_sf(coords = c("station_longitude", "station_latitude"), crs = 4326)
-
-restroom_subway_join = st_join(restroom_sf, subway_sf, join = st_is_within_distance, dist = 100) # merging the two data sets
+restroom_subway_join = st_join(restroom_sf, subway_sf, join = st_nearest_feature) # merging the two data sets
 
 # Cleaning merged data
 restroom_subway_data = restroom_subway_join %>%
   select(
-    restroom_latitude, restroom_longitude, 
-    restroom_location, open, accessibility, 
-    changing_stations, status, location_type, 
-    station_name, ada, entry, exit_only, vending
+    restroom_accessibility,
+      # Dependent variable (ADA accessibility)
+    restroom_latitude, restroom_longitude,
+      # Restroom location features
+    restroom_changing_stations, restroom_open,
+      # Restroom other features
+    station_latitude, station_longitude,
+      # Subway station location features
+    entrance_type, staffing
+      # Subway station other features
   ) %>%
+  drop_na() %>% 
   mutate(
-    # Convert ada and other categorical variables to factors
-    open = factor(open, levels = c("Future", "Seasonal", "Year Round"), ordered = TRUE),
-    accessibility = factor(accessibility, levels = c("Not Accessible", "Partially Accessible", "Fully Accessible"), ordered = TRUE),
-    changing_stations = factor(changing_stations, levels = c(0, 1)),
-    ada = factor(ada, levels = c("Yes", "No"))
+    restroom_accessibility = as.factor(as.character(restroom_accessibility)), 
+      # str(restroom_subway_data$restroom_accessibility)
+        # confirming if restroom_accessibility is no longer ordered
+    restroom_accessibility = relevel(restroom_accessibility, ref = "Not Accessible"),
+    restroom_open = as.factor(restroom_open),
+    entrance_type = as.factor(entrance_type),
+    staffing = as.factor(staffing)
   )
 ```
 
-```{r predicting_ada_distance, echo = FALSE, message = FALSE, warning = FALSE}
-#distance_matrix = st_distance(restroom_sf, subway_sf)  # Distances between restrooms and all subway stations
+```{r predicting_model, echo = FALSE, message = FALSE, warning = FALSE}
+# Multinomial logistic regression model
+ada_model = multinom(restroom_accessibility ~ restroom_latitude + restroom_longitude +
+                       restroom_changing_stations + restroom_open +
+                       station_latitude + station_longitude + 
+                       entrance_type + staffing,
+                     data = restroom_subway_data)
 
-#distance_to_nearest_subway = apply(distance_matrix, 1, function(x) min(x, na.rm = TRUE))
- # Distance of nearest subway station from restroom
-
-#if(length(distance_to_nearest_subway) != nrow(restroom_subway_data)) {
-  #distance_to_nearest_subway[is.na(distance_to_nearest_subway)] = Inf
-#}
-
-#restroom_subway_data = restroom_subway_data %>%
-  #mutate(distance_to_subway = distance_to_nearest_subway)
+# Check the model summary
+summary(ada_model)
 ```
 
-```{r predicting_ada_visuals}
+```{r testing_model, echo = FALSE, message = FALSE, warning = FALSE}
+predicted_accessibility = predict(ada_model, restroom_subway_data)
 
+# Confusion Matrix to evaluate the model's performance
+table(Predicted = predicted_accessibility, Actual = restroom_subway_data$restroom_accessibility)
+
+# Calculate accuracy
+accuracy = mean(predicted_accessibility == restroom_subway_data$restroom_accessibility)
+print(paste("Accuracy: ", accuracy))
 ```
 
+```{r model_visual, echo = FALSE, message = FALSE, warning = FALSE}
+# # Predicted classes
+# predicted_classes = predict(ada_model, type = "class")
+# 
+# # Visualize the confusion matrix
+# conf_matrix = confusionMatrix(predicted_classes, restroom_subway_data$restroom_accessibility)
+# 
+# # Convert confusion matrix to a table
+# conf_matrix_table = as.table(conf_matrix)
+# 
+# # Plot heatmap of the confusion matrix
+# pheatmap(conf_matrix_table, 
+#          color = colorRampPalette(c("white", "blue"))(100), 
+#          main = "Confusion Matrix Heatmap",
+#          cluster_rows = FALSE, cluster_cols = FALSE)
+# Predicted probabilities
+```
