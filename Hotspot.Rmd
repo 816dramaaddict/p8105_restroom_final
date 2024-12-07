@@ -3,8 +3,6 @@ title: "Hot Spot Analysis (Getis-Ord Gi)"
 output: 
   html_document:
     code_folding: hide
-    toc: true
-    toc_float: true
 ---
 
 ```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
@@ -124,11 +122,15 @@ subway_with_restrooms = st_join(subway_sf, restroom_sf, join = st_nearest_featur
 
 Hot Spot Analysis using the Getis-Ord Gi* statistic is a spatial statistical method used to identify statistically significant clusters (hot spots or cold spots) of high or low values in geographic data. This technique helps determine areas where a phenomenon (e.g., restroom accessibility) is unusually concentrated or sparse.
 
-```{r}
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
 # Step 1: Load ZIP Code Shapefile
 zip_shapes <- st_read("./NYC/zipcode.shp") %>%
   st_transform(crs = 4326) %>%
   rename(zip_code = modzcta)
+```
+
+
+```{r Getis-Ord_Gi, echo = FALSE, message = FALSE, warning = FALSE}
 
 # Step 2: Convert Restrooms to sf Object
 restroom_sf <- st_as_sf(
@@ -250,7 +252,7 @@ Neutral areas (light colors) suggest no significant clustering, reflecting avera
 Cold spots or areas with no data (gray) are observed in regions like Staten Island and some peripheral areas, highlighting gaps in restroom density or missing data requiring further investigation.
 
 
-```{r}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # Calculate distances between restrooms and subway entrances
 subway_restroom_dist <- st_distance(subway_sf, restroom_sf)
 
@@ -278,7 +280,8 @@ underserved_sample %>%
 ```
 There are 272 stations without restrooms within 500m. 
 
-```{r}
+
+```{r general, echo=FALSE, message=FALSE, warning=FALSE}
 # Define a custom legend function
 addLegendCustom <- function(map, pal, values, title, na_label, na_color, position = "bottomright") {
   # Create the gradient legend
@@ -310,11 +313,12 @@ addLegendCustom <- function(map, pal, values, title, na_label, na_color, positio
 
 # Define the interactive map function
 interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway, zip_shapes) {
+  
   # Define a custom yellow triangle icon for restrooms
   yellow_triangle_icon <- makeIcon(
     iconUrl = "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png",
-    iconWidth = 20,
-    iconHeight = 20
+    iconWidth = 10,
+    iconHeight = 10
   )
   
   # Define a color palette for Getis-Ord Gi* Z-scores
@@ -355,7 +359,7 @@ interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway
       ),
       color = "blue",
       fillOpacity = 0.7,
-      radius = 5
+      radius = 2.5
     ) %>%
     
     # Add underserved subway stations as a layer
@@ -372,7 +376,7 @@ interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway
       ),
       color = "red",
       fillOpacity = 0.7,
-      radius = 5
+      radius = 2.5
     ) %>%
     
     # Add Getis-Ord Gi* Z-scores as a layer
@@ -412,6 +416,7 @@ interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway
 
 # Render the interactive map
 interactive_map(restroom_cleaned, subway_cleaned, underserved_subway, zip_shapes)
+
 
 
 ```
