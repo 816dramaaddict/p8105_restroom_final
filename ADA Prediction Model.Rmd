@@ -1,28 +1,9 @@
 ---
-title: "p8105_restroom_final"
-output: html_document #github_document
+title: "ADA Accessibility Prediction"
+author: "Rita Wang"
+date: "2024-12-07"
+output: github_document
 ---
-### The group members (names and UNIs) 
-
-* Carrie Wu, Kw3104
-* Huiyan Ni, Hn2453
-* Rita Wang, Ryw2109
-* Megan Panier, Map2365
-* Minghe Wang, mw3845
-
-### Operational Restrooms Across NYC
-Although public restrooms are readily available to us, they are not always usable. This could be due to malfunctions of the restroom or the entirety of the restroom is closed due to the location being closed for holiday or for the season. Analyzing the available of operational restrooms in NYC may help to prevent individuals from going to public restroom while worrying it may not be available.
-
-#### The intended final products 
-Our final product will be a comprehensive webpage with four main sections: an introduction to the project and dataset, data visualizations comparing restroom conditions, an interactive map of operational restrooms, and a detailed report with findings and future recommendations. This will allow users to explore restroom accessibility and discover patterns in restroom availability across different areas of NYC. 
-
-#### The anticipated data sources and planned analyses / visualizations / coding challenges
-We will source our data from NYC Open Data on Public Restrooms and the train station dataset from our class resources. Planned analyses will include mapping operational restrooms by location using latitude and longitude, visualizing accessibility across NYC train stations, and comparing restrooms by accessibility and gender accommodations. A significant challenge may be aligning columns from the two datasets for accurate analysis.
-
-#### The planned timeline 
-Our timeline includes completing data tidying by 11/22/2024, visualizations by 11/30/2024, the webpage by 12/06/2024, and a recorded presentation by 12/12/2024. Our team will collaborate on GitHub for proposal creation, using .Rmd to render the document as a GitHub document for submission.
-
-### Data Cleaning
 
 ```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
 library(tidyverse)
@@ -58,8 +39,8 @@ subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Dat
 
 # Clean restroom data
 restroom_cleaned = restroom_cleaned %>% 
-  select(
-    -website, -operator, -hours_of_operation 
+  dplyr::select(
+    -operator, -hours_of_operation, -website
   ) %>% 
   rename(
     restroom_latitude = latitude,
@@ -101,8 +82,6 @@ restroom_df = restroom_cleaned %>%
   filter(location_type == 'Transit')
 ```
 
-MTA reports that there is 63 out of 423 subway stations provide restrooms 7am - 7pm and in restroom_df that we imported from NYC Open Data, only `r nrow(restroom_cleaned)` restroom were marked as in the location of subway out of `r nrow(restroom_df)` recorded restrooms.
-
 ```{r clean_subway_data, echo = FALSE, message = FALSE, warning = FALSE}
 # Load the dataset
 subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv"))
@@ -142,54 +121,6 @@ subway_cleaned = subway_df %>%
 subway_sf = st_sf(subway_cleaned, crs = 4326)
 ```
 
-
-### Hotspot Analysis
-
-## Mapping the subway station
-```{r mapping_subway_station_location, echo = FALSE, message = FALSE, warning = FALSE}
-leaflet(data = subway_cleaned) %>%
-  addTiles() %>% 
-  addCircleMarkers(
-    lng = ~station_longitude, lat = ~station_latitude, 
-    label = ~station_name, # Station name as a label
-    popup = ~paste("Line:", line, "<br>", "ADA Accessible:", ada), 
-    radius = 5, color = "blue", fillOpacity = 0.7
-  )
-```
-
-## Mapping the restroom location
-```{r mapping_restroom_location, echo = FALSE, message = FALSE, warning = FALSE}
-  leaflet(data = restroom_cleaned) %>%
-    addTiles() %>% 
-    addMarkers(
-      lng = ~restroom_longitude,
-      lat = ~restroom_latitude,
-      label = ~facility_name,
-      popup = ~paste0(
-        "<b>Restroom:</b> ", facility_name, "<br>",
-        "<b>Location:</b> ", restroom_location, "<br>",
-        "<b>Accessibility:</b> ", accessibility
-      ),
-      icon = makeIcon(
-        iconUrl = "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png",
-        iconWidth = 10,
-        iconHeight = 15
-      )
-    )
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```{r predicting_ada_prep, echo = FALSE, message = FALSE, warning = FALSE}
 restroom_subway_join = st_join(restroom_sf, subway_sf, join = st_nearest_feature) # merging the two data sets
 
@@ -219,7 +150,7 @@ restroom_subway_data = restroom_subway_join %>%
   )
 ```
 
-```{r predicting_model, echo = FALSE, message = FALSE, warning = FALSE}
+```{r predicting_model, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
 # Multinomial logistic regression model
 ada_model = multinom(restroom_accessibility ~ restroom_latitude + restroom_longitude +
                        restroom_changing_stations + restroom_open +
@@ -231,16 +162,26 @@ ada_model = multinom(restroom_accessibility ~ restroom_latitude + restroom_longi
 summary(ada_model)
 ```
 
-```{r testing_model, echo = FALSE, message = FALSE, warning = FALSE}
+**Fully accessible model:**
+
+_fully ADA accessible_ = 13.09322 + (-44.518986 x restroom_latitude) + (-51.73608 x restroom_longitude) + (0.6882738 x restroom_changing_stations) + (9.258301 x restroom_open.L) + (5.345283 x restroom_open.Q) + (45.850648 x station_latitude) + (52.89934 x station_longitude) + (19.29844 x entrance_type4) + (25.222168 x entrance_type5) + (32.24590 x entrance_type6) + (15.90470 x entrance_type7) + (3.510139 x staffing.L) + (-6.005553 x staffing.Q) + (-8.185782 x staffing.C)
+
+**Partially accessible model:**
+
+_partially ADA accessible_ = 16.87786 + (6.597743 x restroom_latitude) + (-42.09849 x restroom_longitude) + (-0.2384599 x restroom_changing_stations) + (11.934446 x restroom_open.L) + (6.890356 x restroom_open.Q) + (-6.401506 x station_latitude) + (42.45565 x station_longitude) + (-12.21631 x entrance_type4) + (-7.487845 x entrance_type5) + (-26.49563 x entrance_type6) + (-17.85312 x entrance_type7) + (-2.186729 x staffing.L) + (19.399016 x staffing.Q) + (7.440258 x staffing.C)
+
+```{r testing_model, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
 predicted_accessibility = predict(ada_model, restroom_subway_data)
 
 # Confusion Matrix to evaluate the model's performance
 table(Predicted = predicted_accessibility, Actual = restroom_subway_data$restroom_accessibility)
 
 # Calculate accuracy
-accuracy = mean(predicted_accessibility == restroom_subway_data$restroom_accessibility)
-print(paste("Accuracy: ", accuracy))
+accuracy = mean(predicted_accessibility == restroom_subway_data$restroom_accessibility) * 100
+accuracy = print(paste(accuracy, "%"))
 ```
+
+When testing the prediction model on the public restroom and train station data, there is an approximate of `r accuracy`.
 
 ```{r model_visual, echo = FALSE, message = FALSE, warning = FALSE}
 # # Predicted classes
