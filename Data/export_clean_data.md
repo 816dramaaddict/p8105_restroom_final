@@ -210,8 +210,14 @@ restroom_near_transit <- restroom_cleaned %>%
 subway_with_restrooms <- st_join(subway_sf, restroom_sf, join = st_nearest_feature)
 ```
 
-For restroom data, we factor the character variables (`status`, ) into
-binary and categorical variables.
+For restroom data, we factor the character variables (`status`, `open`,
+`accessibility`, `changing_stations`) into binary and categorical
+variables.
+
+After cleaning, `restroom_cleaned` contains 1047 rows and 10 columns.
+
+Then we merge the file by enhancing both dataframes to `sf` and find the
+closest `restroom` subject to each `subway` subjects.
 
 # Export clean data
 
