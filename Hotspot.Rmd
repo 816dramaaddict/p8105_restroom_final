@@ -1,7 +1,10 @@
 ---
 title: "Hotspot"
-output: html_document
-
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
 ---
 
 ### Data Cleaning
@@ -81,7 +84,6 @@ restroom_df = restroom_cleaned %>%
   filter(location_type == 'Transit')
 ```
 
-MTA reports that there is 63 out of 423 subway stations provide restrooms 7am - 7pm and in restroom_df that we imported from NYC Open Data, only `r nrow(restroom_cleaned)` restroom were marked as in the location of subway out of `r nrow(restroom_df)` recorded restrooms.
 
 ```{r clean_subway_data, echo = FALSE, message = FALSE, warning = FALSE}
 # Load the dataset
@@ -125,6 +127,18 @@ subway_with_restrooms = st_join(subway_sf, restroom_sf, join = st_nearest_featur
 ```
 
 
+
+```{r zipcode_clean, echo = FALSE, message = FALSE, warning = FALSE}
+# Download from US Census Bureau
+county_shapes <- st_read("./NYC/tl_2023_us_county.shp")
+
+# Filter NYC counties using FIPS codes
+nyc_counties <- county_shapes %>%
+  filter(STATEFP == "36" & COUNTYFP %in% c("005", "047", "061", "081", "085"))
+
+```
+
+
 ### Hotspot Analysis
 
 underserverd subway stations
@@ -136,11 +150,32 @@ subway_restroom_dist <- st_distance(subway_sf, restroom_sf)
 underserved_subway <- subway_sf %>%
   mutate(min_distance = apply(subway_restroom_dist, 1, min)) %>%
   filter(min_distance > 500)
+
 ```
 There are 272 stations without restrooms within 500m. 
 
 calculate the density of restroom in each zipcode
 ```{r}
+# Load the shapefile
+zip_shapes <- st_read("./NYC/nyc.shp") %>%
+  st_transform(zip_shapes, crs = 4326)
+
+# Calculate area in square kilometers
+zip_shapes <- zip_shapes %>%
+  mutate(area_km2 = st_area(geometry) / 1e6)  # Convert from square meters to square kilometers
+
+# Count the number of restrooms in each ZIP code
+restroom_density <- restroom_cleaned %>%
+  group_by(zip_code) %>%
+  summarize(restroom_count = n(), .groups = "drop")
+
+# Join the restroom counts with the shapefile
+zip_shapes <- zip_shapes %>%
+  left_join(restroom_density, by = c("GEOID" = "zip_code")) %>%
+  mutate(
+    restroom_count = replace_na(restroom_count, 0),  # Fill missing values with 0
+    density = restroom_count / as.numeric(area_km2)  # Density (restrooms per km²)
+  )
 
 ```
 
