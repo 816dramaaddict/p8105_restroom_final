@@ -27,25 +27,7 @@ library(leaflet)
 # How Accessible Subways Are?
 
 ```{r}
-subway_df = read_csv("Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
-  janitor::clean_names()
-# Clean subway data
-subway_cleaned = subway_df %>% 
-  mutate(
-    entrance_type = factor(
-      entrance_type,
-      levels = c("Stair", "Easement", "Door", "Walkway", "Escalator", "Ramp", "Elevator")
-    )
-  ) %>% 
-  mutate(
-    staffing = factor(
-      staffing,
-      levels = c("NONE", "Spc Ev", "PART", "FULL")
-    )
-  ) %>% 
-  dplyr::select(
-    -ada_notes, -staff_hours, -north_south_street, -east_west_street, -corner
-  )
+subway_cleaned = read_csv("Data/cleaned_subway_data.csv")
 
 # Importing NYC map
 nyc_map = st_read(here::here('NYC', 'nyc.shp'), quiet = TRUE)
@@ -316,6 +298,21 @@ leaflet() |>
 ### When considering restroom access,
 
 ```{r}
+subway_with_restroom = read_csv("Data/cleaned_subway_restroom_data.csv") %>% 
+  mutate(
+    ada <- factor(ada, levels = c("FALSE", "TRUE")),
+    free_crossover <- factor(free_crossover, levels = c("FALSE", "TRUE"))
+  )
+
+# Select the Variables for Clustering
+clustering_data <- subway_cleaned %>%
+  dplyr::select(entrance_type, staffing, ada, free_crossover, station_latitude, station_longitude, station_name)
+
+set.seed(123)  # For reproducibility
+km_result <- clustering_data %>% 
+  dplyr::select(-station_latitude, -station_longitude, -station_name) %>% 
+  kmodes(modes = 3, iter.max = 10)
+
 
 ```
 

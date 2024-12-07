@@ -147,18 +147,22 @@ subway_cleaned <- subway_dirty %>%
     division, line, station_name, station_latitude, station_longitude, 
     entrance_type, vending, staffing, ada, free_crossover, station_location
   ) %>% 
-  st_as_sf(coords = c("station_longitude", "station_latitude"), crs = 4326) %>%
+  mutate(
+    x = station_longitude,
+    y = station_latitude
+  ) %>% 
+  st_as_sf(coords = c("x", "y"), crs = 4326) %>% 
   distinct(station_name, .keep_all = TRUE)
 
 # Convert subway data to sf object
-subway_sf <- st_sf(subway_cleaned, crs = 4326)
+subway_sf = st_sf(subway_cleaned, crs = 4326)
 ```
 
 For subway data, we factor character variables `entrance_type` and
 `staffing` into categorical variables and select variable like
 `station_latitude`, `station_longitude`, `ada`, etc for future analysis.
 
-After cleaning, `subway_cleaned` contains 356 rows and 10 columns.
+After cleaning, `subway_cleaned` contains 356 rows and 12 columns.
 
 ``` r
 restroom_cleaned <- restroom_dirty %>% 
@@ -173,15 +177,14 @@ restroom_cleaned <- restroom_dirty %>%
   mutate(
     restroom_latitude = as.numeric(restroom_latitude),
     restroom_longitude = as.numeric(restroom_longitude),
+    restroom_location = st_as_sfc(restroom_location),
     restroom_open = factor(
       open,
-      levels = c("Future", "Seasonal", "Year Round"),
-      ordered = TRUE
+      levels = c("Future", "Seasonal", "Year Round")
     ),
     restroom_accessibility = factor(
       accessibility,
-      levels = c("Not Accessible", "Partially Accessible", "Fully Accessible"),
-      ordered = TRUE
+      levels = c("Not Accessible", "Partially Accessible", "Fully Accessible")
     ),
     restroom_changing_stations = case_when(
       changing_stations %in% c("Yes, in single-stall all gender restroom only",
@@ -201,7 +204,7 @@ restroom_cleaned <- restroom_dirty %>%
   )
 
 # Convert dataframe to sf for spatial operations
-restroom_sf <- st_as_sf(restroom_cleaned, coords = c("restroom_longitude", "restroom_latitude"), crs = 4326)
+restroom_sf <- st_as_sf(restroom_cleaned, crs = 4326)
 
 # Filter restrooms near transit
 restroom_near_transit <- restroom_cleaned %>% 
