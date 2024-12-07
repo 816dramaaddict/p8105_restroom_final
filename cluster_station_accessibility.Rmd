@@ -27,25 +27,7 @@ library(leaflet)
 # How Accessible Subways Are?
 
 ```{r}
-subway_df = read_csv("Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
-  janitor::clean_names()
-# Clean subway data
-subway_cleaned = subway_df %>% 
-  mutate(
-    entrance_type = factor(
-      entrance_type,
-      levels = c("Stair", "Easement", "Door", "Walkway", "Escalator", "Ramp", "Elevator")
-    )
-  ) %>% 
-  mutate(
-    staffing = factor(
-      staffing,
-      levels = c("NONE", "Spc Ev", "PART", "FULL")
-    )
-  ) %>% 
-  dplyr::select(
-    -ada_notes, -staff_hours, -north_south_street, -east_west_street, -corner
-  )
+subway_cleaned = read_csv("Data/cleaned_subway_data.csv")
 
 # Importing NYC map
 nyc_map = st_read(here::here('NYC', 'nyc.shp'), quiet = TRUE)

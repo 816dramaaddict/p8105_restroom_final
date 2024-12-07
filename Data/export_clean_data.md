@@ -147,18 +147,22 @@ subway_cleaned <- subway_dirty %>%
     division, line, station_name, station_latitude, station_longitude, 
     entrance_type, vending, staffing, ada, free_crossover, station_location
   ) %>% 
-  st_as_sf(coords = c("station_longitude", "station_latitude"), crs = 4326) %>%
+  mutate(
+    x = station_longitude,
+    y = station_latitude
+  ) %>% 
+  st_as_sf(coords = c("x", "y"), crs = 4326) %>% 
   distinct(station_name, .keep_all = TRUE)
 
 # Convert subway data to sf object
-subway_sf <- st_sf(subway_cleaned, crs = 4326)
+subway_sf = st_sf(subway_cleaned, crs = 4326)
 ```
 
 For subway data, we factor character variables `entrance_type` and
 `staffing` into categorical variables and select variable like
 `station_latitude`, `station_longitude`, `ada`, etc for future analysis.
 
-After cleaning, `subway_cleaned` contains 356 rows and 10 columns.
+After cleaning, `subway_cleaned` contains 356 rows and 12 columns.
 
 ``` r
 restroom_cleaned <- restroom_dirty %>% 
