@@ -29,7 +29,7 @@ subway_df = read_csv("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
   janitor::clean_names()
 # Clean subway data
 subway_cleaned = subway_df %>% 
-  # select(-ada_notes, -staff_hours, -north_south_street, -east_west_street, -corner) %>% 
+  select(-ada_notes, -staff_hours, -north_south_street, -east_west_street, -corner) %>% 
   mutate(
     entrance_type = factor(
       entrance_type,
