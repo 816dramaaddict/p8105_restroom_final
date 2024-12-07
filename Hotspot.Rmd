@@ -1,0 +1,254 @@
+---
+title: "Hotspot"
+output: html_document
+
+---
+
+### Data Cleaning
+
+```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
+library(tidyverse)
+library(sf)
+library(ggplot2)
+library(purrr)
+library(tidyverse)
+library(dplyr)
+library(janitor)
+library(here)
+library(leaflet)
+library(reader)
+library(spatstat)
+
+library(tidygeocoder)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_bw() + theme(legend.position = "bottom"))
+```
+
+```{r clean_restroom_data, echo = FALSE, message = FALSE, warning = FALSE}
+# Import data
+restroom_cleaned = read_csv(here::here("./Data/Public_Restrooms_20241203.csv")) %>% 
+  janitor::clean_names()
+subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv")) %>% 
+  janitor::clean_names()
+
+# Clean restroom data
+restroom_cleaned = restroom_cleaned %>% 
+  select(
+    -website, -operator, -hours_of_operation 
+  ) %>% 
+  rename(
+    restroom_latitude = latitude,
+    restroom_longitude = longitude,
+    restroom_location = location
+  ) %>% 
+  mutate(
+    restroom_latitude = as.numeric(restroom_latitude),
+    restroom_longitude = as.numeric(restroom_longitude),
+    restroom_location = st_as_sfc(restroom_location), #convert to point
+    restroom_open = factor(
+      open,
+      levels = c("Future", "Seasonal", "Year Round"),
+      ordered = TRUE
+    ),
+    restroom_accessibility = factor(
+      accessibility,
+      levels = c("Not Accessible", "Partially Accessible", "Fully Accessible"),
+      ordered = TRUE
+    ),
+    restroom_changing_stations = case_when(
+      changing_stations %in% c("Yes, in single-stall all gender restroom only",
+                                "Yes, in women's restroom only",
+                                "Yes") ~ 1,
+      changing_stations == "No" ~ 0
+    ),
+    restroom_status = case_when(
+      status %in% c("Not Operational",
+                    "Closed for Construction",
+                    "Closed") ~ 0,
+      status == "Operational" ~ 1
+    )
+  ) 
+
+# Convert dataframe to sf for spatial operations
+restroom_sf = st_sf(restroom_cleaned, crs = 4326)
+restroom_df = restroom_cleaned %>% 
+  filter(location_type == 'Transit')
+```
+
+MTA reports that there is 63 out of 423 subway stations provide restrooms 7am - 7pm and in restroom_df that we imported from NYC Open Data, only `r nrow(restroom_cleaned)` restroom were marked as in the location of subway out of `r nrow(restroom_df)` recorded restrooms.
+
+```{r clean_subway_data, echo = FALSE, message = FALSE, warning = FALSE}
+# Load the dataset
+subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv"))
+
+# Clean the dataset
+subway_cleaned = subway_df %>% 
+  janitor::clean_names() %>% 
+  select( -ada_notes, -staff_hours, -north_south_street, -east_west_street, -corner) %>%
+  rename(
+    subway_latitude = entrance_latitude,
+    subway_longitude = entrance_longitude,
+    subway_location = entrance_location
+  ) %>% 
+  drop_na(subway_latitude, subway_longitude) %>%  # Drop rows with missing coordinates to avoid errors
+  st_as_sf(coords = c("subway_longitude", "subway_latitude"), crs = 4326) %>% 
+  mutate(
+    entrance_type = case_when(
+      entrance_type == "Elevator" ~ 1,
+      entrance_type == "Ramp" ~ 2,
+      entrance_type == "Escalator" ~ 3,
+      entrance_type == "Walkway" ~ 4,
+      entrance_type == "Door" ~ 5,
+      entrance_type == "Easement" ~ 6,
+      entrance_type == "Stair" ~ 7,
+      TRUE ~ NA_real_  # Handle unexpected values as NA
+    )
+  ) %>% 
+  mutate(
+    staffing = factor(
+      staffing,
+      levels = c("NONE", "Spc Ev", "PART", "FULL"),
+      ordered = TRUE
+    )
+  )
+
+# Convert subway data to sf object
+subway_sf = st_sf(subway_cleaned, crs = 4326)
+
+subway_with_restrooms = st_join(subway_sf, restroom_sf, join = st_nearest_feature)
+```
+
+
+### Hotspot Analysis
+
+underserverd subway stations
+```{r}
+# Calculate distances between restrooms and subway entrances
+subway_restroom_dist <- st_distance(subway_sf, restroom_sf)
+
+# Identify underserved areas (e.g., areas without restrooms within 500m)
+underserved_subway <- subway_sf %>%
+  mutate(min_distance = apply(subway_restroom_dist, 1, min)) %>%
+  filter(min_distance > 500)
+```
+There are 272 stations without restrooms within 500m. 
+
+calculate the density of restroom in each zipcode
+```{r}
+
+```
+
+
+```{r}
+# Function to create the interactive map
+interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway) {
+  # Define a custom yellow triangle icon for restrooms
+  yellow_triangle_icon <- makeIcon(
+    iconUrl = "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png",
+    iconWidth = 20,
+    iconHeight = 20
+  )
+  
+  leaflet() %>%
+    # Add CartoDB Positron base layer
+    addProviderTiles(providers$CartoDB.Positron) %>%
+    
+    # Add restroom locations as a layer with yellow triangle icons
+    addMarkers(
+      data = restroom_cleaned,
+      lng = ~restroom_longitude,
+      lat = ~restroom_latitude,
+      group = "Restrooms",
+      label = ~facility_name,
+      popup = ~paste0(
+        "<b>Restroom:</b> ", facility_name, "<br>",
+        "<b>Location:</b> ", restroom_location
+      ),
+      icon = yellow_triangle_icon
+    ) %>%
+    
+    # Add subway locations as a layer
+    addCircleMarkers(
+      data = subway_cleaned,
+      lng = ~station_longitude,
+      lat = ~station_latitude,
+      group = "Subway Stations",
+      label = ~station_name,
+      popup = ~paste0(
+        "<b>Station:</b> ", station_name, "<br>",
+        "<b>Line:</b> ", line
+      ),
+      color = "blue",
+      fillOpacity = 0.7,
+      radius = 5
+    ) %>%
+    
+    # Add subway locations as a layer
+    addCircleMarkers(
+      data = underserved_subway,
+      lng = ~station_longitude,
+      lat = ~station_latitude,
+      group = "Underserved Stations",
+      label = ~station_name,
+      popup = ~paste0(
+        "<b>Station:</b> ", station_name, "<br>",
+        "<b>Line:</b> ", line
+      ),
+      color = "red",
+      fillOpacity = 0.7,
+      radius = 5
+    ) %>%
+    
+    # Add layer control
+    addLayersControl(
+      baseGroups = c("CartoDB"),
+      overlayGroups = c("Restrooms", "Subway Stations", "Underserved Stations"),
+      options = layersControlOptions(collapsed = FALSE)
+    )
+}
+
+# Render the map
+interactive_map(restroom_cleaned, subway_cleaned, underserved_subway)
+```
+This interactive map contains the location of restrooms and subway stations. You can play around of this map by select and deselect the layer of restrooms and subway station layer, zoom in and zoom out the map, and moving your cursor to each icon to discover the name and location of restrooms and stations. 
+
+## Kernel Density Estimation (KDE)
+```{r}
+# Convert the data to a point pattern object
+# Ensure the data contains 'restroom_longitude' and 'restroom_latitude'
+restroom_points <- as(restroom_sf, "Spatial")  # Convert sf object to Spatial object
+window <- owin(xrange = range(restroom_points@coords[,1]), 
+               yrange = range(restroom_points@coords[,2]))
+
+restroom_ppp <- ppp(
+  x = restroom_points@coords[,1], 
+  y = restroom_points@coords[,2], 
+  window = window
+)
+
+# Kernel density estimation
+kden <- density(restroom_ppp, sigma = 0.01)  # Adjust sigma (bandwidth) as needed
+
+# Plot the results
+plot(kden, main = "Kernel Density Estimation of Restroom Locations")
+```
+
+## Hot Spot Analysis (Getis-Ord Gi):
+Hot Spot Analysis using the Getis-Ord Gi* statistic is a spatial statistical method used to identify statistically significant clusters (hot spots or cold spots) of high or low values in geographic data. This technique helps determine areas where a phenomenon (e.g., restroom accessibility) is unusually concentrated or sparse.
+
+
+
+
+
+
+
+
+
+
+
