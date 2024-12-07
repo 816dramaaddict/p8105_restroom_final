@@ -12,6 +12,7 @@ library(tidyverse)
 library(tidyr)
 library(ggplot2)
 library(sf)
+library(plotly)
 ```
 
 # How Accessible Subways Are?
@@ -21,15 +22,7 @@ subway_df = read_csv("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
   janitor::clean_names()
 # Clean subway data
 subway_df = subway_df %>% 
-  select(
-    station_name, line, division, entrance_type, entry, exit_only, ada, 
-    entrance_latitude, entrance_longitude, entrance_location, staffing, free_crossover
-  ) %>% 
-  rename(
-    subway_latitude = entrance_latitude,
-    subway_longitude = entrance_longitude,
-    subway_location = entrance_location
-  ) %>% 
+  select( -ada_notes, -staff_hours, -north_south_street, -east_west_street, -corner) %>% 
   mutate(
     entrance_type = case_when(
       entrance_type == "Elevator" ~ 1,
@@ -49,6 +42,13 @@ subway_df = subway_df %>%
       ordered = TRUE
     )
   )
+  # ) %>% 
+  # mutate(
+  #   ada = case_when(
+  #     ada == TRUE ~ 1,
+  #     ada == FALSE ~ 0
+  #   )
+  # )
 
 # Importing NYC map
 nyc_map = st_read(here::here('NYC', 'nyc.shp'), quiet = TRUE)
@@ -63,19 +63,32 @@ nycmap = st_transform(nyc_map, crs = 4326)
 subway_df %>% 
   ggplot() +
     geom_sf(
-      data = nyc_map, fill = NA, color = 'grey'
+      data = nyc_map, fill = NA
     ) + 
     geom_point(
-      aes(x = subway_longitude, y = subway_latitude, color = ada),
+      aes(x = station_longitude, y = station_latitude, color = ada),
       size = 0.5, alpha = 0.5) +
-  coord_sf()
-  # theme_void(base_size = 15) +
-  # theme(legend.position = 'bottom') +
-  # guides(color = guide_legend(
-  #   title.position = "top",
-  #   override.aes = list(size = 3))) +
-  # scale_color_manual(values = c("TRUE" = "aquamarine3", "FALSE" = "slateblue3")) +
-  # labs(color = "ada")
+  coord_sf() +
+  theme_void(base_size = 10) +
+  theme(legend.position = 'bottom') +
+  guides(color = guide_legend(
+    title.position = "top",
+    override.aes = list(size = 3))) +
+  scale_color_manual(values = c("FALSE" = "aquamarine3", "TRUE" = "slateblue3")) +
+  labs(color = "ADA Compliance")
+
+subway_df %>% 
+  group_by(ada) %>% 
+  count(ada) %>% 
+  plot_ly (x = ~ada, 
+           y = ~n, 
+           # marker = list(color = ~ifelse(ada == 1, "blue", "red")),
+           color = ~ada,
+           type = "bar") %>% 
+  layout(
+    xaxis = list(title = "Ada Complaince"),   
+    yaxis = list(title = "Number of Stations") 
+  )
 
 ```
 
