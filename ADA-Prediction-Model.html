@@ -1570,17 +1570,9 @@ border-radius: 0px;
 </div>
 
 
-<pre class="r"><code>library(sf)
-library(purrr)
-library(tidyverse)
-library(dplyr)
-library(janitor)
-library(here)
-library(reader)
-library(nnet)
-library(knitr)</code></pre>
-<pre class="r"><code>restroom_subway_join = read_csv(here::here(&quot;./Data/cleaned_subway_restroom_data.csv&quot;))</code></pre>
-<pre class="r"><code># Cleaning merged data
+<pre class="r"><code>restroom_subway_join = read_csv(here::here(&quot;./Data/cleaned_subway_restroom_data.csv&quot;))
+
+# Cleaning merged data
 restroom_subway_data = restroom_subway_join %&gt;%
   dplyr::select(
     restroom_accessibility,
