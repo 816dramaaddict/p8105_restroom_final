@@ -6,7 +6,7 @@ output: github_document
 ---
 
 ```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
-library(tidyverse)
+library(tidyverse) #:)
 library(sf)
 library(ggplot2)
 library(purrr)
