@@ -66,6 +66,7 @@ summary(ada_model)
 **Model Summary Table**
 ```{r model_table, echo = FALSE, message = FALSE, warning = FALSE}
 table = head(broom::tidy(ada_model), 31)
+colnames(table) = c("Accessibility Level with Reference to No Accessibility", "Predictors", "Coefficients", "Standard Error", "Test Statistic", "P-Value")
 knitr::kable(table)
 ```
 Based on this output, we see that the restroom location, ramp entrance types and partial staff at train stations are highly significant predictors of a public restroom being fully ADA accessible. For public restrooms that are partially ADA accessible, restroom location, ramp entrance types and no staff members at train stations are strong predictors. Variables such as easement entrance type, elevator entrance type, and stairs entrance type for full ADA accessibility have high p-values, indicating weak evidence of their association with a restroom being fully ADA accessible. Potential multicollinearity or insufficient data may have resulted in very large or null statistical values on escalator entrance type and ramp entrance type.
