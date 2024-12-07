@@ -2,18 +2,22 @@
 title: "Clutser Accessibility of Subway Stations"
 output: 
   html_document:
+    code_folding: hide
     toc: true
     toc_float: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(collapse = TRUE, 
+                      message = FALSE)
 library(tidyverse)
 library(tidyr)
 library(ggplot2)
 library(sf)
 library(plotly)
+library(forcats)
 ```
+ 
 
 # How Accessible Subways Are?
 
@@ -24,15 +28,10 @@ subway_df = read_csv("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>%
 subway_df = subway_df %>% 
   select( -ada_notes, -staff_hours, -north_south_street, -east_west_street, -corner) %>% 
   mutate(
-    entrance_type = case_when(
-      entrance_type == "Elevator" ~ 1,
-      entrance_type == "Ramp" ~ 2,
-      entrance_type == "Escalator" ~ 3,
-      entrance_type == "Walkway" ~ 4,
-      entrance_type == "Door" ~ 5,
-      entrance_type == "Easement" ~ 6,
-      entrance_type == "Stair" ~ 7,
-      TRUE ~ NA_real_  # Handle unexpected values as NA
+    entrance_type = factor(
+      entrance_type,
+      levels = c("Stair", "Easement", "Door", "Walkway", "Escalator", "Ramp", "Elevator"),
+      ordered = TRUE
     )
   ) %>% 
   mutate(
@@ -42,24 +41,22 @@ subway_df = subway_df %>%
       ordered = TRUE
     )
   )
-  # ) %>% 
-  # mutate(
-  #   ada = case_when(
-  #     ada == TRUE ~ 1,
-  #     ada == FALSE ~ 0
-  #   )
-  # )
 
 # Importing NYC map
 nyc_map = st_read(here::here('NYC', 'nyc.shp'), quiet = TRUE)
 nycmap = st_transform(nyc_map, crs = 4326)
 ```
 
-
+<br><br>
 
 ### Are there ADA compliances?
 
-```{r}
+:::: {style="display: flex;"}
+
+::: {}
+
+
+```{r, fig.align='center', fig.width=8, fig.height=8}
 subway_df %>% 
   ggplot() +
     geom_sf(
@@ -67,7 +64,7 @@ subway_df %>%
     ) + 
     geom_point(
       aes(x = station_longitude, y = station_latitude, color = ada),
-      size = 0.5, alpha = 0.5) +
+      size = 2.5, alpha = 0.5) +
   coord_sf() +
   theme_void(base_size = 10) +
   theme(legend.position = 'bottom') +
@@ -77,28 +74,104 @@ subway_df %>%
   scale_color_manual(values = c("FALSE" = "aquamarine3", "TRUE" = "slateblue3")) +
   labs(color = "ADA Compliance")
 
+```
+
+:::
+  
+  
+:::{}
+
+<br><br>
+<br><br>
+
+```{r, fig.align='center', fig.width=4, fig.height=3.5, fig.align='center'}
 subway_df %>% 
   group_by(ada) %>% 
   count(ada) %>% 
   plot_ly (x = ~ada, 
            y = ~n, 
-           # marker = list(color = ~ifelse(ada == 1, "blue", "red")),
            color = ~ada,
            type = "bar") %>% 
   layout(
     xaxis = list(title = "Ada Complaince"),   
     yaxis = list(title = "Number of Stations") 
   )
-
 ```
 
-### Are there staffs?
-
-### Are there free crossovers?
+:::
+  
+::::
 
 ### What are their entrance types?
 
-# Rank Subway's Accessibility
+```{r}
+subway_df %>% 
+  group_by(entrance_type) %>% 
+  count(entrance_type) %>% 
+  ungroup() %>%
+  mutate(entrance_type = fct_reorder(entrance_type, n, .desc = TRUE)) %>%
+  plot_ly (x = ~entrance_type, y = ~n, 
+           color = ~entrance_type,
+           type = "bar", colors = "viridis") %>% 
+  layout(
+    xaxis = list(title = "Entrance Type"),   
+    yaxis = list(title = "Number of Stations")
+  )
+```
+
+### Other Accessibilities and Amenities
+
+```{r}
+subway_df %>% 
+  ggplot() +
+    geom_sf(
+      data = nyc_map, fill = NA
+    ) + 
+    geom_point(
+      aes(x = station_longitude, y = station_latitude, color = free_crossover),
+      size = 2.5, alpha = 0.5) +
+  coord_sf() +
+  theme_void(base_size = 10) +
+  theme(legend.position = 'bottom') +
+  guides(color = guide_legend(
+    title.position = "top",
+    override.aes = list(size = 3))) +
+  labs(color = "Free Crossover")
+
+subway_df %>% 
+  group_by(free_crossover) %>% 
+  count(free_crossover) %>% 
+  plot_ly (x = ~free_crossover, 
+           y = ~n, 
+           color = ~free_crossover,
+           type = "bar") %>% 
+  layout(
+    xaxis = list(title = "Free Crossover"),   
+    yaxis = list(title = "Number of Stations") 
+  )
+```
+
+```{r}
+subway_df %>%
+  group_by(staffing) %>%
+  count(staffing) %>%
+  ungroup() %>%
+  mutate(staffing = fct_reorder(staffing, n, .desc = TRUE)) %>%
+  plot_ly(
+    x = ~staffing, 
+    y = ~n,
+    color = ~staffing,
+    type = "bar", 
+    colors = "viridis"
+  ) %>%
+  layout(
+    xaxis = list(title = "Staffing"),   
+    yaxis = list(title = "Number of Stations")
+  )
+```
+
+
+# Cluster Subway's Accessibility
 
 ### When NOT considering restroom access,
 
