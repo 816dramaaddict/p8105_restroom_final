@@ -10,6 +10,7 @@ library(dplyr)
 library(tidyverse)
 library(tidyr)
 library(sf)
+library(forcats)
 ```
 
 # Import Data
@@ -84,10 +85,12 @@ restroom_cleaned <- restroom_dirty %>%
       open,
       levels = c("Future", "Seasonal", "Year Round")
     ),
+    restroom_open = fct_explicit_na(restroom_open, na_level = "Unknown"),
     restroom_accessibility = factor(
       accessibility,
       levels = c("Not Accessible", "Partially Accessible", "Fully Accessible")
     ),
+    restroom_accessibility = fct_explicit_na(restroom_accessibility, na_level = "Unknown"),
     restroom_changing_stations = case_when(
       changing_stations %in% c("Yes, in single-stall all gender restroom only",
                                 "Yes, in women's restroom only",
@@ -117,7 +120,7 @@ restroom_near_transit <- restroom_cleaned %>%
 subway_with_restrooms <- st_join(subway_sf, restroom_sf, join = st_nearest_feature)
 ```
 
-For restroom data, we factor the character variables (`status`, `open`, `accessibility`, `changing_stations`) into binary and categorical variables.
+For restroom data, we factor the character variables (`status`, `open`, `accessibility`, `changing_stations`) into binary and categorical variables. We handle NAs in `status` and `changing_stations` by assigning 0, and `open`, `accessibility` by adding explicity NA level `'Unknown'`
 
 After cleaning, `restroom_cleaned` contains `r nrow(restroom_cleaned)` rows and `r ncol(restroom_cleaned)` columns.
 
