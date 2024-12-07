@@ -10,7 +10,6 @@ library(dplyr)
 library(tidyverse)
 library(tidyr)
 library(sf)
-library(forcats)
 ```
 
 # Import Data
@@ -85,12 +84,10 @@ restroom_cleaned <- restroom_dirty %>%
       open,
       levels = c("Future", "Seasonal", "Year Round")
     ),
-    restroom_open = fct_explicit_na(restroom_open, na_level = "Unknown"),
     restroom_accessibility = factor(
       accessibility,
       levels = c("Not Accessible", "Partially Accessible", "Fully Accessible")
     ),
-    restroom_accessibility = fct_explicit_na(restroom_accessibility, na_level = "Unknown"),
     restroom_changing_stations = case_when(
       changing_stations %in% c("Yes, in single-stall all gender restroom only",
                                 "Yes, in women's restroom only",

@@ -182,12 +182,10 @@ restroom_cleaned <- restroom_dirty %>%
       open,
       levels = c("Future", "Seasonal", "Year Round")
     ),
-    restroom_open = fct_explicit_na(restroom_open, na_level = "Unknown"),
     restroom_accessibility = factor(
       accessibility,
       levels = c("Not Accessible", "Partially Accessible", "Fully Accessible")
     ),
-    restroom_accessibility = fct_explicit_na(restroom_accessibility, na_level = "Unknown"),
     restroom_changing_stations = case_when(
       changing_stations %in% c("Yes, in single-stall all gender restroom only",
                                 "Yes, in women's restroom only",
@@ -206,16 +204,7 @@ restroom_cleaned <- restroom_dirty %>%
   dplyr::select(
     -open, -accessibility, -changing_stations, -status
   )
-```
 
-    ## Warning: There was 1 warning in `mutate()`.
-    ## ℹ In argument: `restroom_open = fct_explicit_na(restroom_open, na_level =
-    ##   "Unknown")`.
-    ## Caused by warning:
-    ## ! `fct_explicit_na()` was deprecated in forcats 1.0.0.
-    ## ℹ Please use `fct_na_value_to_level()` instead.
-
-``` r
 # Convert dataframe to sf for spatial operations
 restroom_sf <- st_as_sf(restroom_cleaned, crs = 4326)
 
