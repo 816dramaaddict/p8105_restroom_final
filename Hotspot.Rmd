@@ -8,22 +8,16 @@ output:
 ---
 
 ```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
-library(tidyverse)
-library(sf)
+library(sf)         
+library(dplyr)       
+library(leaflet)     
+library(knitr)       
+library(readr)      
+library(janitor)    
+library(spdep)      
+library(here) 
 library(ggplot2)
-library(purrr)
 library(tidyverse)
-library(dplyr)
-library(janitor)
-library(here)
-library(leaflet)
-library(reader)
-library(spatstat)
-library(knitr)
-library(spdep)
-
-
-library(tidygeocoder)
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -285,6 +279,36 @@ underserved_sample %>%
 There are 272 stations without restrooms within 500m. 
 
 ```{r}
+# Define a custom legend function
+addLegendCustom <- function(map, pal, values, title, na_label, na_color, position = "bottomright") {
+  # Create the gradient legend
+  colorAdditions <- paste0(
+    '<i style="background:', pal(seq(min(values, na.rm = TRUE), max(values, na.rm = TRUE), length.out = 5)), 
+    ';width:15px;height:15px;display:inline-block;margin-right:5px"></i>',
+    c(round(seq(min(values, na.rm = TRUE), max(values, na.rm = TRUE), length.out = 5), 2))
+  )
+  
+  # Add NA entry at the bottom
+  naEntry <- paste0(
+    '<div style="margin-top: 10px;">',
+    '<i style="background:', na_color, ';width:15px;height:15px;display:inline-block;margin-right:5px"></i>',
+    na_label,
+    '</div>'
+  )
+  
+  # Combine all legend entries
+  legendHTML <- paste0(
+    '<div style="margin-left: 15px;"><strong>', title, '</strong><br>',
+    paste(colorAdditions, collapse = "<br>"), 
+    naEntry,
+    '</div>'
+  )
+  
+  # Add the custom legend to the map
+  addControl(map, html = legendHTML, position = position)
+}
+
+# Define the interactive map function
 interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway, zip_shapes) {
   # Define a custom yellow triangle icon for restrooms
   yellow_triangle_icon <- makeIcon(
@@ -293,7 +317,7 @@ interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway
     iconHeight = 20
   )
   
-  # Define a color palette for Gi* Z-scores
+  # Define a color palette for Getis-Ord Gi* Z-scores
   pal <- colorNumeric(
     palette = "Reds",
     domain = zip_shapes$gi_star,
@@ -343,7 +367,8 @@ interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway
       label = ~station_name,
       popup = ~paste0(
         "<b>Station:</b> ", station_name, "<br>",
-        "<b>Line:</b> ", line
+        "<b>Line:</b> ", line, "<br>",
+        "<b>Distance to Restroom:</b> ", round(min_distance, 2), " meters"
       ),
       color = "red",
       fillOpacity = 0.7,
@@ -356,7 +381,7 @@ interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway
       fillColor = ~pal(gi_star),
       weight = 0.5,
       color = "black",
-      fillOpacity = 0.7,
+      fillOpacity = 2,
       group = "Getis-Ord Gi*",
       popup = ~paste0(
         "<b>ZIP Code:</b> ", zip_code, "<br>",
@@ -374,17 +399,20 @@ interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway
     ) %>%
     
     # Add legend for Getis-Ord Gi* Z-scores
-    addLegend(
+    addLegendCustom(
+      map = .,
       pal = pal,
       values = zip_shapes$gi_star,
       title = "Getis-Ord Gi*<br>Hot Spot Analysis",
-      na.label = "No Data",
+      na_label = "No Data (NA)",
+      na_color = "gray",
       position = "bottomright"
     )
 }
 
-# Render the map
+# Render the interactive map
 interactive_map(restroom_cleaned, subway_cleaned, underserved_subway, zip_shapes)
+
 
 ```
 This interactive map displays the locations of restrooms and subway stations. You can explore the map by toggling layers for restrooms, subway stations, underserved stations, and Getis-Ord Gi* results, zooming in and out, and hovering over icons to view detailed information about the name and location of restrooms and stations.
