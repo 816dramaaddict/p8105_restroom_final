@@ -79,6 +79,7 @@ restroom_cleaned <- restroom_dirty %>%
   mutate(
     restroom_latitude = as.numeric(restroom_latitude),
     restroom_longitude = as.numeric(restroom_longitude),
+    restroom_location = st_as_sfc(restroom_location),
     restroom_open = factor(
       open,
       levels = c("Future", "Seasonal", "Year Round")
@@ -105,7 +106,7 @@ restroom_cleaned <- restroom_dirty %>%
   )
 
 # Convert dataframe to sf for spatial operations
-restroom_sf <- st_as_sf(restroom_cleaned, coords = c("restroom_longitude", "restroom_latitude"), crs = 4326)
+restroom_sf <- st_as_sf(restroom_cleaned, crs = 4326)
 
 # Filter restrooms near transit
 restroom_near_transit <- restroom_cleaned %>% 
