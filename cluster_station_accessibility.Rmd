@@ -39,7 +39,6 @@ nycmap = st_transform(nyc_map, crs = 4326)
 ### Are there ADA compliances?
 
 
-
 ```{r}
 subway_cleaned %>% 
   ggplot() +
@@ -141,7 +140,7 @@ leaflet() |>
              lng = ~station_longitude,
              lat = ~station_latitude,
              label = ~station_name,
-             radius = 3,
+             radius = 4,
              color = NA,
              # color = ~pal(accessibility_level),
              fillColor = ~pal(accessibility_level),
@@ -229,7 +228,7 @@ leaflet() |>
              lng = ~station_longitude,
              lat = ~station_latitude,
              label = ~station_name,
-             radius = 3,
+             radius = 4,
              color = NA,
              # color = ~pal(accessibility_level),
              fillColor = ~pal(accessibility_level),
