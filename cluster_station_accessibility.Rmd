@@ -8,11 +8,76 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidyr)
+library(ggplot2)
+library(sf)
 ```
 
 # How Accessible Subways Are?
 
+```{r data_cleaning}
+subway_df = read_csv("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  janitor::clean_names()
+# Clean subway data
+subway_df = subway_df %>% 
+  select(
+    station_name, line, division, entrance_type, entry, exit_only, ada, 
+    entrance_latitude, entrance_longitude, entrance_location, staffing, free_crossover
+  ) %>% 
+  rename(
+    subway_latitude = entrance_latitude,
+    subway_longitude = entrance_longitude,
+    subway_location = entrance_location
+  ) %>% 
+  mutate(
+    entrance_type = case_when(
+      entrance_type == "Elevator" ~ 1,
+      entrance_type == "Ramp" ~ 2,
+      entrance_type == "Escalator" ~ 3,
+      entrance_type == "Walkway" ~ 4,
+      entrance_type == "Door" ~ 5,
+      entrance_type == "Easement" ~ 6,
+      entrance_type == "Stair" ~ 7,
+      TRUE ~ NA_real_  # Handle unexpected values as NA
+    )
+  ) %>% 
+  mutate(
+    staffing = factor(
+      staffing,
+      levels = c("NONE", "Spc Ev", "PART", "FULL"),
+      ordered = TRUE
+    )
+  )
+
+# Importing NYC map
+nyc_map = st_read(here::here('NYC', 'nyc.shp'), quiet = TRUE)
+nycmap = st_transform(nyc_map, crs = 4326)
+```
+
+
+
 ### Are there ADA compliances?
+
+```{r}
+subway_df %>% 
+  ggplot() +
+    geom_sf(
+      data = nyc_map, fill = NA, color = 'grey'
+    ) + 
+    geom_point(
+      aes(x = subway_longitude, y = subway_latitude, color = ada),
+      size = 0.5, alpha = 0.5) +
+  coord_sf()
+  # theme_void(base_size = 15) +
+  # theme(legend.position = 'bottom') +
+  # guides(color = guide_legend(
+  #   title.position = "top",
+  #   override.aes = list(size = 3))) +
+  # scale_color_manual(values = c("TRUE" = "aquamarine3", "FALSE" = "slateblue3")) +
+  # labs(color = "ada")
+
+```
 
 ### Are there staffs?
 
