@@ -45,7 +45,7 @@ knitr::opts_chunk$set(
 theme_set(theme_bw() + theme(legend.position = "bottom"))
 ```
 
-```{r clean_restroom_data}
+```{r clean_restroom_data, echo = FALSE, message = FALSE, warning = FALSE}
 # Import data
 restroom_cleaned = read_csv(here::here("./Data/Public_Restrooms_20241203.csv")) %>% 
   janitor::clean_names()
@@ -66,23 +66,23 @@ restroom_cleaned = restroom_cleaned %>%
     restroom_latitude = as.numeric(restroom_latitude),
     restroom_longitude = as.numeric(restroom_longitude),
     restroom_location = st_as_sfc(restroom_location), #convert to point
-    open = factor(
+    restroom_open = factor(
       open,
       levels = c("Future", "Seasonal", "Year Round"),
       ordered = TRUE
     ),
-    accessibility = factor(
+    restroom_accessibility = factor(
       accessibility,
       levels = c("Not Accessible", "Partially Accessible", "Fully Accessible"),
       ordered = TRUE
     ),
-    changing_stations = case_when(
+    restroom_changing_stations = case_when(
       changing_stations %in% c("Yes, in single-stall all gender restroom only",
                                 "Yes, in women's restroom only",
                                 "Yes") ~ 1,
       changing_stations == "No" ~ 0
     ),
-    status = case_when(
+    restroom_status = case_when(
       status %in% c("Not Operational",
                     "Closed for Construction",
                     "Closed") ~ 0,
@@ -99,27 +99,48 @@ restroom_df = restroom_cleaned %>%
 
 MTA reports that there is 63 out of 423 subway stations provide restrooms 7am - 7pm and in restroom_df that we imported from NYC Open Data, only `r nrow(restroom_cleaned)` restroom were marked as in the location of subway out of `r nrow(restroom_df)` recorded restrooms.
 
-```{r clean_subway_data}
+```{r clean_subway_data, echo = FALSE, message = FALSE, warning = FALSE}
 # Load the dataset
 subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv"))
 
 # Clean the dataset
 subway_cleaned = subway_df %>% 
   janitor::clean_names() %>% 
-  select(
-    line, station_name, station_latitude, station_longitude, 
-    route1, route2, route3, route4, route5, route6, 
-    route7, route8, route9, route10, route11, 
-    entry, exit_only, vending, entrance_type, ada
-  ) %>%  
-  mutate(across(starts_with("route"), ~ replace_na(as.character(.), ""))) %>% 
-   mutate(
-    station_latitude = as.numeric(station_latitude),
-    station_longitude = as.numeric(station_longitude)
+  select( -ada_notes, -staff_hours, -north_south_street, -east_west_street, -corner) %>%
+  rename(
+    subway_latitude = entrance_latitude,
+    subway_longitude = entrance_longitude,
+    subway_location = entrance_location
+  ) %>% 
+  drop_na(subway_latitude, subway_longitude) %>%  # Drop rows with missing coordinates to avoid errors
+  st_as_sf(coords = c("subway_longitude", "subway_latitude"), crs = 4326) %>% 
+  mutate(
+    entrance_type = case_when(
+      entrance_type == "Elevator" ~ 1,
+      entrance_type == "Ramp" ~ 2,
+      entrance_type == "Escalator" ~ 3,
+      entrance_type == "Walkway" ~ 4,
+      entrance_type == "Door" ~ 5,
+      entrance_type == "Easement" ~ 6,
+      entrance_type == "Stair" ~ 7,
+      TRUE ~ NA_real_  # Handle unexpected values as NA
+    )
+  ) %>% 
+  mutate(
+    staffing = factor(
+      staffing,
+      levels = c("NONE", "Spc Ev", "PART", "FULL"),
+      ordered = TRUE
+    )
   )
+
+# Convert subway data to sf object
+subway_sf = st_sf(subway_cleaned, crs = 4326)
+
+subway_with_restrooms = st_join(subway_sf, restroom_sf, join = st_nearest_feature)
 ```
 
-```{r mapping_subway_station_location}
+```{r mapping_subway_station_location, echo = FALSE, message = FALSE, warning = FALSE}
 leaflet(data = subway_cleaned) %>%
   addTiles() %>% 
   addCircleMarkers(
@@ -130,7 +151,7 @@ leaflet(data = subway_cleaned) %>%
   )
 ```
 
-```{r mapping_restroom_location}
+```{r mapping_restroom_location, echo = FALSE, message = FALSE, warning = FALSE}
   leaflet(data = restroom_cleaned) %>%
     addTiles() %>% 
     addMarkers(
@@ -150,7 +171,7 @@ leaflet(data = subway_cleaned) %>%
     )
 ```
 
-```{r predicting_ada_prep}
+```{r predicting_ada_prep, echo = FALSE, message = FALSE, warning = FALSE}
 subway_cleaned = subway_cleaned %>%
   mutate(
     station_latitude = as.numeric(station_latitude),
@@ -180,18 +201,18 @@ restroom_subway_data = restroom_subway_join %>%
   )
 ```
 
-```{r predicting_ada_distance}
-distance_matrix = st_distance(restroom_sf, subway_sf)  # Distances between restrooms and all subway stations
+```{r predicting_ada_distance, echo = FALSE, message = FALSE, warning = FALSE}
+#distance_matrix = st_distance(restroom_sf, subway_sf)  # Distances between restrooms and all subway stations
 
-distance_to_nearest_subway = apply(distance_matrix, 1, function(x) min(x, na.rm = TRUE))
+#distance_to_nearest_subway = apply(distance_matrix, 1, function(x) min(x, na.rm = TRUE))
  # Distance of nearest subway station from restroom
 
-if(length(distance_to_nearest_subway) != nrow(restroom_subway_data)) {
-  distance_to_nearest_subway[is.na(distance_to_nearest_subway)] = Inf
-}
+#if(length(distance_to_nearest_subway) != nrow(restroom_subway_data)) {
+  #distance_to_nearest_subway[is.na(distance_to_nearest_subway)] = Inf
+#}
 
-restroom_subway_data = restroom_subway_data %>%
-  mutate(distance_to_subway = distance_to_nearest_subway)
+#restroom_subway_data = restroom_subway_data %>%
+  #mutate(distance_to_subway = distance_to_nearest_subway)
 ```
 
 ```{r predicting_ada_visuals}
