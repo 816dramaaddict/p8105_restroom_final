@@ -190,13 +190,15 @@ restroom_cleaned <- restroom_dirty %>%
       changing_stations %in% c("Yes, in single-stall all gender restroom only",
                                 "Yes, in women's restroom only",
                                 "Yes") ~ 1,
-      changing_stations %in% c("No", NA) ~ 0
+      changing_stations == "No" ~ 0,
+      TRUE ~ 0
 ),
     restroom_status = case_when(
       status %in% c("Not Operational",
                     "Closed for Construction",
                     "Closed") ~ 0,
-      status == "Operational" ~ 1
+      status == "Operational" ~ 1,
+      TRUE ~ 0
     )
   ) %>% 
   dplyr::select(

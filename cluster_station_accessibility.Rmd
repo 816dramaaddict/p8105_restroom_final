@@ -301,18 +301,37 @@ leaflet() |>
 subway_with_restroom = read_csv("Data/cleaned_subway_restroom_data.csv") %>% 
   mutate(
     ada <- factor(ada, levels = c("FALSE", "TRUE")),
-    free_crossover <- factor(free_crossover, levels = c("FALSE", "TRUE"))
+    free_crossover <- factor(free_crossover, levels = c("FALSE", "TRUE")),
+    # restroom_status <- factor(restroom_status, levels = c("FALSE", "TRUE")),
+    # restroom_changing_stations <- factor(restroom_changing_stations, levels = c("FALSE", "TRUE"))
+    restroom_changing_stations <- case_when(
+      restroom_changing_stations == NA ~ 0
+    )
   )
 
 # Select the Variables for Clustering
-clustering_data <- subway_cleaned %>%
-  dplyr::select(entrance_type, staffing, ada, free_crossover, station_latitude, station_longitude, station_name)
+clustering_merged_data <- subway_with_restroom %>%
+  dplyr::select(entrance_type, staffing, ada, free_crossover, station_latitude, station_longitude, station_name,
+                restroom_open, restroom_accessibility, restroom_changing_stations, restroom_status)
 
 set.seed(123)  # For reproducibility
-km_result <- clustering_data %>% 
+km_result2 <- clustering_merged_data %>% 
   dplyr::select(-station_latitude, -station_longitude, -station_name) %>% 
   kmodes(modes = 3, iter.max = 10)
 
+clustering_merged_data$.cluster <- factor(km_result2$cluster)
 
+
+# Define a Mode function
+Mode_for_merged <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+cluster_merged_profiles <- clustering_merged_data %>%
+  group_by(.cluster) %>%
+  summarise(across(everything(), ~ Mode_for_merged(.x)))
+
+knitr::kable(cluster_merged_profiles)
 ```
 
