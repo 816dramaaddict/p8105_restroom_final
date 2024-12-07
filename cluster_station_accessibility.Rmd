@@ -21,6 +21,7 @@ library(klaR)
 library(knitr)
 library(kableExtra)
 library(leaflet)
+library(stats)
 ```
  
 
@@ -34,16 +35,12 @@ nyc_map = st_read(here::here('NYC', 'nyc.shp'), quiet = TRUE)
 nycmap = st_transform(nyc_map, crs = 4326)
 ```
 
-<br><br>
 
 ### Are there ADA compliances?
 
-:::: {style="display: flex;"}
-
-::: {}
 
 
-```{r, fig.align='center', fig.width=8, fig.height=8}
+```{r}
 subway_cleaned %>% 
   ggplot() +
     geom_sf(
@@ -63,52 +60,10 @@ subway_cleaned %>%
 
 ```
 
-:::
-  
-  
-:::{}
-
-<br><br>
-<br><br>
-
-```{r, fig.align='center', fig.width=4, fig.height=3.5, fig.align='center'}
-subway_cleaned %>% 
-  group_by(ada) %>% 
-  count(ada) %>% 
-  plot_ly (x = ~ada, 
-           y = ~n, 
-           color = ~ada,
-           type = "bar") %>% 
-  layout(
-    xaxis = list(title = "Ada Complaince"),   
-    yaxis = list(title = "Number of Stations") 
-  )
-```
-
-:::
-  
-::::
-
-### What are their entrance types?
-
-```{r}
-subway_cleaned %>% 
-  group_by(entrance_type) %>% 
-  count(entrance_type) %>% 
-  ungroup() %>%
-  mutate(entrance_type = fct_reorder(entrance_type, n, .desc = TRUE)) %>%
-  plot_ly (x = ~entrance_type, y = ~n, 
-           color = ~entrance_type,
-           type = "bar", colors = "viridis") %>% 
-  layout(
-    xaxis = list(title = "Entrance Type"),   
-    yaxis = list(title = "Number of Stations")
-  )
-```
 
 ### Other Accessibilities and Amenities
 
-```{r}
+```{r, warning = FALSE}
 subway_cleaned %>% 
   ggplot() +
     geom_sf(
@@ -124,37 +79,6 @@ subway_cleaned %>%
     title.position = "top",
     override.aes = list(size = 3))) +
   labs(color = "Free Crossover")
-
-subway_cleaned %>% 
-  group_by(free_crossover) %>% 
-  count(free_crossover) %>% 
-  plot_ly (x = ~free_crossover, 
-           y = ~n, 
-           color = ~free_crossover,
-           type = "bar") %>% 
-  layout(
-    xaxis = list(title = "Free Crossover"),   
-    yaxis = list(title = "Number of Stations") 
-  )
-```
-
-```{r}
-subway_cleaned %>%
-  group_by(staffing) %>%
-  count(staffing) %>%
-  ungroup() %>%
-  mutate(staffing = fct_reorder(staffing, n, .desc = TRUE)) %>%
-  plot_ly(
-    x = ~staffing, 
-    y = ~n,
-    color = ~staffing,
-    type = "bar", 
-    colors = "viridis"
-  ) %>%
-  layout(
-    xaxis = list(title = "Staffing"),   
-    yaxis = list(title = "Number of Stations")
-  )
 ```
 
 
@@ -162,15 +86,7 @@ subway_cleaned %>%
 
 ### When NOT considering restroom access,
 
-```{r}
-# Convert binary variable to factors
-subway_cleaned <- subway_cleaned %>% 
-  mutate(
-    ada <- factor(ada, levels = c("FALSE", "TRUE")),
-    free_crossover <- factor(free_crossover, levels = c("FALSE", "TRUE"))
-  )
-  
-
+```{r, warning = FALSE}
 # Select the Variables for Clustering
 clustering_data <- subway_cleaned %>%
   dplyr::select(entrance_type, staffing, ada, free_crossover, station_latitude, station_longitude, station_name)
@@ -178,7 +94,7 @@ clustering_data <- subway_cleaned %>%
 set.seed(123)  # For reproducibility
 km_result <- clustering_data %>% 
   dplyr::select(-station_latitude, -station_longitude, -station_name) %>% 
-  kmodes(modes = 3, iter.max = 10)
+  kmodes(modes = 3)
 ```
 
 
@@ -194,11 +110,15 @@ Mode <- function(x) {
 
 cluster_profiles <- clustering_data %>%
   group_by(.cluster) %>%
+  dplyr::select(-station_latitude, -station_longitude) %>% 
+  dplyr::select(station_name, everything()) %>% 
   summarise(across(everything(), ~ Mode(.x)))
 
 knitr::kable(cluster_profiles)
+print(km_result$modes)
 
 ```
+
 
 ```{r}
 clustering_data <- clustering_data %>% 
@@ -244,31 +164,31 @@ leaflet() |>
 
 ### When considering restroom access,
 
-```{r}
+```{r, warning = FALSE}
 subway_with_restroom = read_csv("Data/cleaned_subway_restroom_data.csv")
 
-subway_with_restroom2 <- subway_with_restroom %>% 
-  mutate(
-    #convert to logical
-    restroom_changing_stations_logic = as.logical(restroom_changing_stations),
-    restroom_status_logic = as.logical(restroom_status),
-    restroom_accessibility = fct_explicit_na(restroom_accessibility, na_level = "Unknown"),
-    restroom_open = fct_explicit_na(restroom_open, na_level = "Unknown")
-  )
+subway_with_restroom <- subway_with_restroom %>% 
+   mutate(
+#     #convert to logical
+     restroom_changing_stations_logic = as.logical(restroom_changing_stations),
+     restroom_status_logic = as.logical(restroom_status),
+     restroom_accessibility = fct_explicit_na(restroom_accessibility, na_level = "Unknown"),
+     restroom_open = fct_explicit_na(restroom_open, na_level = "Unknown")
+   )
 ```
 
 
 ```{r}
 
 # Select the Variables for Clustering
-clustering_merged_data <- subway_with_restroom2 %>%
-  dplyr::select(entrance_type, staffing, ada, free_crossover, station_latitude, station_longitude, station_name
-                ,restroom_open, restroom_accessibility, restroom_changing_stations_logic, restroom_status_logic)
-
+clustering_merged_data <- subway_with_restroom %>%
+  dplyr::select(entrance_type, staffing, ada, free_crossover, station_latitude, station_longitude, station_name,
+                restroom_open, restroom_accessibility,restroom_changing_stations_logic, restroom_status_logic)
+             
 set.seed(123)  # For reproducibility
 km_result2 <- clustering_merged_data %>% 
   dplyr::select(-station_latitude, -station_longitude, -station_name) %>% 
-  klaR::kmodes(modes = 3, iter.max = 10)
+  klaR::kmodes(modes = 3)
 
 clustering_merged_data$.cluster <- factor(km_result2$cluster)
 
