@@ -1,0 +1,192 @@
+---
+title: "ADA Accessibility Prediction"
+author: "Rita Wang"
+date: "2024-12-07"
+output: github_document
+---
+
+```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
+library(tidyverse)
+library(sf)
+library(ggplot2)
+library(purrr)
+library(tidyverse)
+library(dplyr)
+library(janitor)
+library(here)
+library(leaflet)
+library(reader)
+library(nnet)
+# library(caret)
+# library(pheatmap)
+library(pROC)
+library(knitr)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_bw() + theme(legend.position = "bottom"))
+```
+
+```{r clean_restroom_data, echo = FALSE, message = FALSE, warning = FALSE}
+# Import data
+restroom_cleaned = read_csv(here::here("./Data/Public_Restrooms_20241203.csv")) %>% 
+  janitor::clean_names()
+subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv")) %>% 
+  janitor::clean_names()
+
+# Clean restroom data
+restroom_cleaned = restroom_cleaned %>% 
+  dplyr::select(
+    -operator, -hours_of_operation, -website
+  ) %>% 
+  rename(
+    restroom_latitude = latitude,
+    restroom_longitude = longitude,
+    restroom_location = location
+  ) %>% 
+  mutate(
+    restroom_latitude = as.numeric(restroom_latitude),
+    restroom_longitude = as.numeric(restroom_longitude),
+    restroom_location = st_as_sfc(restroom_location), #convert to point
+    restroom_open = factor(
+      open,
+      levels = c("Future", "Seasonal", "Year Round"),
+      ordered = TRUE
+    ),
+    restroom_accessibility = factor(
+      accessibility,
+      levels = c("Not Accessible", "Partially Accessible", "Fully Accessible"),
+      ordered = TRUE
+    ),
+    restroom_changing_stations = case_when(
+      changing_stations %in% c("Yes, in single-stall all gender restroom only",
+                                "Yes, in women's restroom only",
+                                "Yes") ~ 1,
+      changing_stations == "No" ~ 0
+    ),
+    restroom_status = case_when(
+      status %in% c("Not Operational",
+                    "Closed for Construction",
+                    "Closed") ~ 0,
+      status == "Operational" ~ 1
+    )
+  ) 
+
+# Convert dataframe to sf for spatial operations
+restroom_sf = st_sf(restroom_cleaned, crs = 4326)
+
+restroom_df = restroom_cleaned %>% 
+  filter(location_type == 'Transit')
+```
+
+```{r clean_subway_data, echo = FALSE, message = FALSE, warning = FALSE}
+# Load the dataset
+subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv"))
+
+# Clean the dataset
+subway_cleaned = subway_df %>% 
+  janitor::clean_names() %>% 
+  dplyr::select( -ada_notes, -staff_hours, -north_south_street, -east_west_street, -corner) %>%
+  rename(
+    subway_latitude = entrance_latitude,
+    subway_longitude = entrance_longitude,
+    subway_location = entrance_location
+  ) %>% 
+  drop_na(subway_latitude, subway_longitude) %>%  # Drop rows with missing coordinates to avoid errors
+  st_as_sf(coords = c("subway_longitude", "subway_latitude"), crs = 4326) %>% 
+  mutate(
+    entrance_type = case_when(
+      entrance_type == "Elevator" ~ 1,
+      entrance_type == "Ramp" ~ 2,
+      entrance_type == "Escalator" ~ 3,
+      entrance_type == "Walkway" ~ 4,
+      entrance_type == "Door" ~ 5,
+      entrance_type == "Easement" ~ 6,
+      entrance_type == "Stair" ~ 7,
+      TRUE ~ NA_real_  # Handle unexpected values as NA
+    )
+  ) %>% 
+  mutate(
+    staffing = factor(
+      staffing,
+      levels = c("NONE", "Spc Ev", "PART", "FULL"),
+      ordered = TRUE
+    )
+  )
+
+# Convert subway data to sf object
+subway_sf = st_sf(subway_cleaned, crs = 4326)
+```
+
+```{r predicting_ada_prep, echo = FALSE, message = FALSE, warning = FALSE}
+restroom_subway_join = st_join(restroom_sf, subway_sf, join = st_nearest_feature) # merging the two data sets
+
+# Cleaning merged data
+restroom_subway_data = restroom_subway_join %>%
+  dplyr::select(
+    restroom_accessibility,
+      # Dependent variable (ADA accessibility)
+    restroom_latitude, restroom_longitude,
+      # Restroom location features
+    restroom_changing_stations, restroom_open,
+      # Restroom other features
+    station_latitude, station_longitude,
+      # Subway station location features
+    entrance_type, staffing
+      # Subway station other features
+  ) %>%
+  drop_na() %>% 
+  mutate(
+    restroom_accessibility = as.factor(as.character(restroom_accessibility)), 
+      # str(restroom_subway_data$restroom_accessibility)
+        # confirming if restroom_accessibility is no longer ordered
+    restroom_accessibility = relevel(restroom_accessibility, ref = "Not Accessible"),
+    restroom_open = as.factor(restroom_open),
+    entrance_type = as.factor(entrance_type),
+    staffing = as.factor(staffing)
+  )
+```
+
+```{r predicting_model, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
+# Multinomial logistic regression model
+ada_model = multinom(restroom_accessibility ~ restroom_latitude + restroom_longitude +
+                       restroom_changing_stations + restroom_open +
+                       station_latitude + station_longitude + 
+                       entrance_type + staffing,
+                     data = restroom_subway_data)
+
+# Check the model summary
+summary(ada_model)
+```
+
+**Model Summary Table**
+```{r model_table, echo = FALSE, message = FALSE, warning = FALSE}
+table = head(broom::tidy(ada_model), 31)
+knitr::kable(table)
+```
+
+**Fully Accessible Model:**
+
+_fully ADA accessible_ = 13.09322 + (-44.518986 x restroom_latitude) + (-51.73608 x restroom_longitude) + (0.6882738 x restroom_changing_stations) + (9.258301 x restroom_open.L) + (5.345283 x restroom_open.Q) + (45.850648 x station_latitude) + (52.89934 x station_longitude) + (19.29844 x entrance_type4) + (25.222168 x entrance_type5) + (32.24590 x entrance_type6) + (15.90470 x entrance_type7) + (3.510139 x staffing.L) + (-6.005553 x staffing.Q) + (-8.185782 x staffing.C)
+
+**Partially Accessible Model:**
+
+_partially ADA accessible_ = 16.87786 + (6.597743 x restroom_latitude) + (-42.09849 x restroom_longitude) + (-0.2384599 x restroom_changing_stations) + (11.934446 x restroom_open.L) + (6.890356 x restroom_open.Q) + (-6.401506 x station_latitude) + (42.45565 x station_longitude) + (-12.21631 x entrance_type4) + (-7.487845 x entrance_type5) + (-26.49563 x entrance_type6) + (-17.85312 x entrance_type7) + (-2.186729 x staffing.L) + (19.399016 x staffing.Q) + (7.440258 x staffing.C)
+
+```{r testing_model, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
+predicted_accessibility = predict(ada_model, restroom_subway_data)
+
+# Confusion Matrix to evaluate the model's performance
+table(Predicted = predicted_accessibility, Actual = restroom_subway_data$restroom_accessibility)
+
+# Calculate accuracy
+accuracy = mean(predicted_accessibility == restroom_subway_data$restroom_accessibility) * 100
+accuracy = print(paste(accuracy, "%"))
+```
+**Accuracy:**
+
+When testing the prediction model on the public restroom and train station data, there is an approximate of `r accuracy`.
