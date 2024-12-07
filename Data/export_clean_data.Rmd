@@ -1,0 +1,136 @@
+---
+title: "export_clean_data"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyverse)
+library(tidyr)
+library(sf)
+```
+
+# Import Data
+
+We import the restroom data from NYC Open Data: https://data.cityofnewyork.us/City-Government/Public-Restrooms/i7jb-7jku/about_data and subway data from the P8105 course website Homework 2 (Problem 1): https://p8105.com/homework_2.html
+
+Then we use `skimr::skim()` to check variables of both datasets.
+
+```{r import_and_view, message=FALSE}
+subway_dirty = read_csv("NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  janitor::clean_names()
+
+restroom_dirty = read_csv("Public_Restrooms_20241203.csv") %>% 
+  janitor::clean_names()
+
+# View subway_dirty
+skimr::skim(subway_dirty)
+
+# View restroom_dirty
+skimr::skim(restroom_dirty)
+```
+# Clean Variable
+
+```{r clean_subway_data}
+subway_cleaned <- subway_dirty %>% 
+  mutate(
+    entrance_type = factor(
+      entrance_type,
+      levels = c("Stair", "Easement", "Door", "Walkway", "Escalator", "Ramp", "Elevator")
+    )
+  ) %>% 
+  mutate(
+    staffing = factor(
+      staffing,
+      levels = c("NONE", "Spc Ev", "PART", "FULL")
+    )
+  ) %>% 
+  dplyr::select(
+    division, line, station_name, station_latitude, station_longitude, 
+    entrance_type, vending, staffing, ada, free_crossover, station_location
+  ) %>% 
+  mutate(
+    x = station_longitude,
+    y = station_latitude
+  ) %>% 
+  st_as_sf(coords = c("x", "y"), crs = 4326) %>% 
+  distinct(station_name, .keep_all = TRUE)
+
+# Convert subway data to sf object
+subway_sf = st_sf(subway_cleaned, crs = 4326)
+```
+
+For subway data, we factor character variables `entrance_type` and `staffing` into categorical variables and select variable like `station_latitude`, `station_longitude`, `ada`, etc for future analysis.
+
+After cleaning, `subway_cleaned` contains `r nrow(subway_cleaned)` rows and `r ncol(subway_cleaned)` columns.
+
+```{r clean_restroom_data}
+restroom_cleaned <- restroom_dirty %>% 
+  dplyr::select(
+    -website, -operator, -hours_of_operation, -additional_notes
+  ) %>% 
+  rename(
+    restroom_latitude = latitude,
+    restroom_longitude = longitude,
+    restroom_location = location
+  ) %>% 
+  mutate(
+    restroom_latitude = as.numeric(restroom_latitude),
+    restroom_longitude = as.numeric(restroom_longitude),
+    restroom_location = st_as_sfc(restroom_location),
+    restroom_open = factor(
+      open,
+      levels = c("Future", "Seasonal", "Year Round")
+    ),
+    restroom_accessibility = factor(
+      accessibility,
+      levels = c("Not Accessible", "Partially Accessible", "Fully Accessible")
+    ),
+    restroom_changing_stations = case_when(
+      changing_stations %in% c("Yes, in single-stall all gender restroom only",
+                                "Yes, in women's restroom only",
+                                "Yes") ~ 1,
+      changing_stations == "No" ~ 0,
+      TRUE ~ 0
+),
+    restroom_status = case_when(
+      status %in% c("Not Operational",
+                    "Closed for Construction",
+                    "Closed") ~ 0,
+      status == "Operational" ~ 1,
+      TRUE ~ 0
+    )
+  ) %>% 
+  dplyr::select(
+    -open, -accessibility, -changing_stations, -status
+  )
+
+# Convert dataframe to sf for spatial operations
+restroom_sf <- st_as_sf(restroom_cleaned, crs = 4326)
+
+# Filter restrooms near transit
+restroom_near_transit <- restroom_cleaned %>% 
+  filter(location_type == 'Transit')
+
+subway_with_restrooms <- st_join(subway_sf, restroom_sf, join = st_nearest_feature)
+```
+
+For restroom data, we factor the character variables (`status`, `open`, `accessibility`, `changing_stations`) into binary and categorical variables. We handle NAs in `status` and `changing_stations` by assigning 0, NAs in the rest variables will be handled specific to each analysis.
+
+After cleaning, `restroom_cleaned` contains `r nrow(restroom_cleaned)` rows and `r ncol(restroom_cleaned)` columns.
+
+Then we merge the file by enhancing both dataframes to `sf` and find the closest `restroom` subject to each `subway` subjects.
+
+# Export clean data
+
+```{r}
+save_restroom_path = "cleaned_restroom_data.csv"
+write_csv(restroom_sf, save_restroom_path, na="")
+
+save_subway_path = "cleaned_subway_data.csv"
+write_csv(subway_sf, save_subway_path, na="")
+
+save_subway_restroom_path = "cleaned_subway_restroom_data.csv"
+write_csv(subway_with_restrooms, save_subway_restroom_path, na="")
