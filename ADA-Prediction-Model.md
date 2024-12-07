@@ -3,6 +3,8 @@ ADA Accessibility Prediction
 Rita Wang
 2024-12-07
 
+**Model Summary Table**
+
 | y.level              | term                       |    estimate | std.error |     statistic |   p.value |
 |:---------------------|:---------------------------|------------:|----------:|--------------:|----------:|
 | Fully Accessible     | (Intercept)                |  13.0932151 | 0.0127258 |  1.028876e+03 | 0.0000000 |
@@ -36,9 +38,7 @@ Rita Wang
 | Partially Accessible | staffing.Q                 |  19.3990161 | 0.0022014 |  8.812125e+03 | 0.0000000 |
 | Partially Accessible | staffing.C                 |   7.4402576 | 0.3054904 |  2.435513e+01 | 0.0000000 |
 
-Model Summary
-
-**Fully accessible model:**
+**Fully Accessible Model:**
 
 *fully ADA accessible* = 13.09322 + (-44.518986 x restroom_latitude) +
 (-51.73608 x restroom_longitude) + (0.6882738 x
@@ -49,7 +49,7 @@ entrance_type5) + (32.24590 x entrance_type6) + (15.90470 x
 entrance_type7) + (3.510139 x staffing.L) + (-6.005553 x staffing.Q) +
 (-8.185782 x staffing.C)
 
-**Partially accessible model:**
+**Partially Accessible Model:**
 
 *partially ADA accessible* = 16.87786 + (6.597743 x restroom_latitude) +
 (-42.09849 x restroom_longitude) + (-0.2384599 x
@@ -59,6 +59,8 @@ station_longitude) + (-12.21631 x entrance_type4) + (-7.487845 x
 entrance_type5) + (-26.49563 x entrance_type6) + (-17.85312 x
 entrance_type7) + (-2.186729 x staffing.L) + (19.399016 x staffing.Q) +
 (7.440258 x staffing.C)
+
+**Accuracy:**
 
 When testing the prediction model on the public restroom and train
 station data, there is an approximate of 87.218045112782 %.

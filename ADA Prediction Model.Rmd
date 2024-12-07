@@ -90,7 +90,7 @@ subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Dat
 # Clean the dataset
 subway_cleaned = subway_df %>% 
   janitor::clean_names() %>% 
-  select( -ada_notes, -staff_hours, -north_south_street, -east_west_street, -corner) %>%
+  dplyr::select( -ada_notes, -staff_hours, -north_south_street, -east_west_street, -corner) %>%
   rename(
     subway_latitude = entrance_latitude,
     subway_longitude = entrance_longitude,
@@ -127,7 +127,7 @@ restroom_subway_join = st_join(restroom_sf, subway_sf, join = st_nearest_feature
 
 # Cleaning merged data
 restroom_subway_data = restroom_subway_join %>%
-  select(
+  dplyr::select(
     restroom_accessibility,
       # Dependent variable (ADA accessibility)
     restroom_latitude, restroom_longitude,
@@ -163,16 +163,17 @@ ada_model = multinom(restroom_accessibility ~ restroom_latitude + restroom_longi
 summary(ada_model)
 ```
 
+**Model Summary Table**
 ```{r model_table, echo = FALSE, message = FALSE, warning = FALSE}
 table = head(broom::tidy(ada_model), 31)
-knitr::kable(table, caption = "Model Summary")
+knitr::kable(table)
 ```
 
-**Fully accessible model:**
+**Fully Accessible Model:**
 
 _fully ADA accessible_ = 13.09322 + (-44.518986 x restroom_latitude) + (-51.73608 x restroom_longitude) + (0.6882738 x restroom_changing_stations) + (9.258301 x restroom_open.L) + (5.345283 x restroom_open.Q) + (45.850648 x station_latitude) + (52.89934 x station_longitude) + (19.29844 x entrance_type4) + (25.222168 x entrance_type5) + (32.24590 x entrance_type6) + (15.90470 x entrance_type7) + (3.510139 x staffing.L) + (-6.005553 x staffing.Q) + (-8.185782 x staffing.C)
 
-**Partially accessible model:**
+**Partially Accessible Model:**
 
 _partially ADA accessible_ = 16.87786 + (6.597743 x restroom_latitude) + (-42.09849 x restroom_longitude) + (-0.2384599 x restroom_changing_stations) + (11.934446 x restroom_open.L) + (6.890356 x restroom_open.Q) + (-6.401506 x station_latitude) + (42.45565 x station_longitude) + (-12.21631 x entrance_type4) + (-7.487845 x entrance_type5) + (-26.49563 x entrance_type6) + (-17.85312 x entrance_type7) + (-2.186729 x staffing.L) + (19.399016 x staffing.Q) + (7.440258 x staffing.C)
 
@@ -186,5 +187,6 @@ table(Predicted = predicted_accessibility, Actual = restroom_subway_data$restroo
 accuracy = mean(predicted_accessibility == restroom_subway_data$restroom_accessibility) * 100
 accuracy = print(paste(accuracy, "%"))
 ```
+**Accuracy:**
 
 When testing the prediction model on the public restroom and train station data, there is an approximate of `r accuracy`.
