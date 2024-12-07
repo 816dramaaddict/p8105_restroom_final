@@ -1,5 +1,5 @@
 ---
-title: "visualization_plot"
+title: "Visualization Plots"
 output: 
   html_document:
     code_folding: hide
@@ -29,7 +29,7 @@ knitr::opts_chunk$set(
 theme_set(theme_bw() + theme(legend.position = "bottom"))
 ```
 
-```{r clean_restroom_data,echo = FALSE, message = FALSE, warning = FALSE}
+```{r clean_restroom_data, echo = FALSE, message = FALSE, warning = FALSE}
 # Import data
 restroom_cleaned = read_csv(here::here("./Data/Public_Restrooms_20241203.csv")) %>% 
   janitor::clean_names()
