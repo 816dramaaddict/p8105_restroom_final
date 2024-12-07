@@ -20,6 +20,7 @@ library(nnet)
 # library(caret)
 # library(pheatmap)
 library(pROC)
+library(knitr)
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -162,6 +163,11 @@ ada_model = multinom(restroom_accessibility ~ restroom_latitude + restroom_longi
 summary(ada_model)
 ```
 
+```{r model_table, echo = FALSE, message = FALSE, warning = FALSE}
+table = head(broom::tidy(ada_model), 31)
+knitr::kable(table, caption = "Model Summary")
+```
+
 **Fully accessible model:**
 
 _fully ADA accessible_ = 13.09322 + (-44.518986 x restroom_latitude) + (-51.73608 x restroom_longitude) + (0.6882738 x restroom_changing_stations) + (9.258301 x restroom_open.L) + (5.345283 x restroom_open.Q) + (45.850648 x station_latitude) + (52.89934 x station_longitude) + (19.29844 x entrance_type4) + (25.222168 x entrance_type5) + (32.24590 x entrance_type6) + (15.90470 x entrance_type7) + (3.510139 x staffing.L) + (-6.005553 x staffing.Q) + (-8.185782 x staffing.C)
@@ -182,21 +188,3 @@ accuracy = print(paste(accuracy, "%"))
 ```
 
 When testing the prediction model on the public restroom and train station data, there is an approximate of `r accuracy`.
-
-```{r model_visual, echo = FALSE, message = FALSE, warning = FALSE}
-# # Predicted classes
-# predicted_classes = predict(ada_model, type = "class")
-# 
-# # Visualize the confusion matrix
-# conf_matrix = confusionMatrix(predicted_classes, restroom_subway_data$restroom_accessibility)
-# 
-# # Convert confusion matrix to a table
-# conf_matrix_table = as.table(conf_matrix)
-# 
-# # Plot heatmap of the confusion matrix
-# pheatmap(conf_matrix_table, 
-#          color = colorRampPalette(c("white", "blue"))(100), 
-#          main = "Confusion Matrix Heatmap",
-#          cluster_rows = FALSE, cluster_cols = FALSE)
-# Predicted probabilities
-```
