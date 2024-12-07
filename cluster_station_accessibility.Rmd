@@ -247,41 +247,23 @@ leaflet() |>
 ```{r}
 subway_with_restroom = read_csv("Data/cleaned_subway_restroom_data.csv")
 
-subway_with_restroom <- subway_with_restroom %>% 
+subway_with_restroom2 <- subway_with_restroom %>% 
   mutate(
-    ada = factor(ada, levels = c("FALSE", "TRUE")),
-    free_crossover = factor(free_crossover, levels = c("FALSE", "TRUE")),
-    #convert to categorical
-    restroom_changing_stations = factor(
-      restroom_changing_stations,
-      levels = c(0, 1),
-      labels = c("FALSE", "TRUE")
-    ),
-    restroom_status = factor(
-      restroom_status,
-      levels = c(0, 1),
-      labels = c("FALSE", "TRUE")
-    ),
+    #convert to logical
+    restroom_changing_stations_logic = as.logical(restroom_changing_stations),
+    restroom_status_logic = as.logical(restroom_status),
     restroom_accessibility = fct_explicit_na(restroom_accessibility, na_level = "Unknown"),
     restroom_open = fct_explicit_na(restroom_open, na_level = "Unknown")
-  ) %>% 
-    mutate(
-    entrance_type = factor(
-      entrance_type,
-      levels = c("Stair", "Easement", "Door", "Walkway", "Escalator", "Ramp", "Elevator")
-    )
-  ) %>% 
-  mutate(
-    staffing = factor(
-      staffing,
-      levels = c("NONE", "Spc Ev", "PART", "FULL")
-    )
   )
+```
+
+
+```{r}
 
 # Select the Variables for Clustering
-clustering_merged_data <- subway_with_restroom %>%
-  dplyr::select(entrance_type, staffing, ada, free_crossover, station_latitude, station_longitude, station_name,
-                restroom_open, restroom_accessibility, restroom_changing_stations, restroom_status)
+clustering_merged_data <- subway_with_restroom2 %>%
+  dplyr::select(entrance_type, staffing, ada, free_crossover, station_latitude, station_longitude, station_name
+                ,restroom_open, restroom_accessibility, restroom_changing_stations_logic, restroom_status_logic)
 
 set.seed(123)  # For reproducibility
 km_result2 <- clustering_merged_data %>% 
@@ -299,8 +281,50 @@ Mode_for_merged <- function(x) {
 
 cluster_merged_profiles <- clustering_merged_data %>%
   group_by(.cluster) %>%
+  dplyr::select(-station_latitude, -station_longitude) %>% 
+  dplyr::select(station_name, everything()) %>% 
   summarise(across(everything(), ~ Mode_for_merged(.x)))
 
 knitr::kable(cluster_merged_profiles)
+```
+
+```{r}
+clustering_merged_data <- clustering_merged_data %>% 
+  mutate(
+    accessibility_level = case_when(
+      .cluster == 1 ~ "High Accessibility",
+      .cluster == 2 ~ "Medium Accessibility",
+      .cluster == 3 ~ "Low Accessibility"
+    )
+  )
+
+pal <- leaflet::colorFactor(
+  palette = c("chartreuse", "darkgoldenrod1", "brown2"),  # Adjust colors as needed
+  domain = clustering_merged_data$accessibility_level
+)
+
+leaflet() |>
+  addTiles() |>  
+  addCircleMarkers(data = clustering_merged_data,
+             lng = ~station_longitude,
+             lat = ~station_latitude,
+             label = ~station_name,
+             radius = 3,
+             color = NA,
+             # color = ~pal(accessibility_level),
+             fillColor = ~pal(accessibility_level),
+             stroke = TRUE, fillOpacity = 0.75,
+             popup = ~paste("Ada:", ada,
+                            "<br> Staffing:", staffing,
+                            "<br> Entrance type:", entrance_type,
+                            "<br> Free crossover:", free_crossover)) |>
+  addProviderTiles(providers$CartoDB.Positron) |>
+  addLegend(
+    "bottomright",
+    pal = pal,
+    values = clustering_merged_data$accessibility_level,
+    title = "Accessibility Level",
+    opacity = 1
+  )
 ```
 
