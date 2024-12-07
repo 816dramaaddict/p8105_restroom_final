@@ -21,6 +21,9 @@ library(here)
 library(leaflet)
 library(reader)
 library(spatstat)
+library(knitr)
+library(spdep)
+
 
 library(tidygeocoder)
 
@@ -142,40 +145,168 @@ underserved_subway <- subway_sf %>%
 ```
 There are 272 stations without restrooms within 500m. 
 
-calculate the density of restroom in each zipcode
+## Hot Spot Analysis (Getis-Ord Gi):
+Hot Spot Analysis using the Getis-Ord Gi* statistic is a spatial statistical method used to identify statistically significant clusters (hot spots or cold spots) of high or low values in geographic data. This technique helps determine areas where a phenomenon (e.g., restroom accessibility) is unusually concentrated or sparse.
 ```{r}
-# Load the shapefile
+# Step 1: Load ZIP Code Shapefile
 zip_shapes <- st_read("./NYC/zipcode.shp") %>%
-  st_transform(zip_shapes, crs = 4326)
+  st_transform(crs = 4326) %>%
+  rename(zip_code = modzcta)
 
-# Calculate area in square kilometers
-zip_shapes <- zip_shapes %>%
-  mutate(area_km2 = st_area(geometry) / 1e6)  # Convert from square meters to square kilometers
+# Step 2: Convert Restrooms to sf Object
+restroom_sf <- st_as_sf(
+  restroom_cleaned,
+  coords = c("restroom_longitude", "restroom_latitude"),  # Replace with your column names
+  crs = 4326
+)
 
-# Count the number of restrooms in each ZIP code
-restroom_density <- restroom_cleaned %>%
+# Step 3: Spatial Join to Assign ZIP Codes
+restroom_sf <- st_transform(restroom_sf, crs = st_crs(zip_shapes))
+restroom_with_zip <- st_join(restroom_sf, zip_shapes, join = st_within)
+
+# Step 4: Count Restrooms in Each ZIP Code
+restroom_density <- restroom_with_zip %>%
+  st_drop_geometry() %>%  # Drop geometry for simplification
   group_by(zip_code) %>%
   summarize(restroom_count = n(), .groups = "drop")
 
-# Join the restroom counts with the shapefile
+# Step 5: Join Restroom Counts with ZIP Code Shapefile
 zip_shapes <- zip_shapes %>%
-  left_join(restroom_density, by = c("GEOID" = "zip_code")) %>%
+  mutate(area_km2 = st_area(geometry) / 1e6) %>%  # Area in square kilometers
+  left_join(restroom_density, by = "zip_code") %>%
   mutate(
     restroom_count = replace_na(restroom_count, 0),  # Fill missing values with 0
     density = restroom_count / as.numeric(area_km2)  # Density (restrooms per km²)
   )
 
+# Step 6: Define Neighbors and Spatial Weights
+zip_nb <- poly2nb(zip_shapes, snap = 0.001)  # Neighbors list with snapping
+zip_weights <- nb2listw(zip_nb, style = "W", zero.policy = TRUE)  # Row-standardized weights
+
+# Step 7: Perform Getis-Ord Gi* Analysis
+gi_star <- localG(zip_shapes$density, zip_weights)
+zip_shapes <- zip_shapes %>%
+  mutate(gi_star = as.numeric(gi_star))  # Convert to numeric for mapping
+
+# Step 8: Define a Custom Legend Function
+addLegendCustom <- function(map, colors, labels, title, position = "bottomright") {
+  colorAdditions <- paste0(
+    '<i style="background:', colors, ';width:15px;height:15px;display:inline-block;margin-right:5px"></i>'
+  )
+  labelAdditions <- paste0('<span style="margin-left:10px">', labels, '</span>')
+  combined <- paste0(colorAdditions, labelAdditions, collapse = "<br>")
+  legendHTML <- paste0(
+    '<div style="margin-left: 15px;"><strong>', title, '</strong><br>',
+    combined,
+    '</div>'
+  )
+  addControl(map, html = legendHTML, position = position)
+}
+
+# Step 9: Create the Interactive Map
+
+# Custom Legend Function to Include NA on a Separate Line
+addLegendCustom <- function(map, pal, values, title, na_label, na_color, position = "bottomright") {
+  # Create the gradient legend
+  colorAdditions <- paste0(
+    '<i style="background:', pal(seq(min(values, na.rm = TRUE), max(values, na.rm = TRUE), length.out = 5)), 
+    ';width:15px;height:15px;display:inline-block;margin-right:5px"></i>',
+    c(round(seq(min(values, na.rm = TRUE), max(values, na.rm = TRUE), length.out = 5), 2))
+  )
+  
+  # Add NA entry at the bottom
+  naEntry <- paste0(
+    '<div style="margin-top: 10px;">',
+    '<i style="background:', na_color, ';width:15px;height:15px;display:inline-block;margin-right:5px"></i>',
+    na_label,
+    '</div>'
+  )
+  
+  # Combine all legend entries
+  legendHTML <- paste0(
+    '<div style="margin-left: 15px;"><strong>', title, '</strong><br>',
+    paste(colorAdditions, collapse = "<br>"), 
+    naEntry,
+    '</div>'
+  )
+  
+  # Add the custom legend to the map
+  addControl(map, html = legendHTML, position = position)
+}
+
+# Define a color palette for Gi* Z-scores
+pal <- colorNumeric(
+  palette = "Reds",
+  domain = zip_shapes$gi_star,
+  na.color = "gray"  # Color for NA values
+)
+
+# Create the interactive map
+leaflet(data = zip_shapes) %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addPolygons(
+    fillColor = ~pal(gi_star),
+    weight = 0.5,
+    color = "black",
+    fillOpacity = 0.7,
+    popup = ~paste0(
+      "<b>ZIP Code:</b> ", zip_code, "<br>",
+      "<b>Restrooms:</b> ", restroom_count, "<br>",
+      "<b>Density:</b> ", round(density, 2), " restrooms/km²<br>",
+      "<b>Gi* Z-Score:</b> ", round(gi_star, 2)
+    )
+  ) %>%
+  addLegendCustom(
+    pal = pal,
+    values = zip_shapes$gi_star,
+    title = "Getis-Ord Gi*<br>Hot Spot Analysis",
+    na_label = "No Data (NA)",
+    na_color = "gray",
+    position = "bottomright"
+  )
+
 ```
+The map identifies significant hot spots (red areas) for restroom density, particularly concentrated in Manhattan, indicating clusters of high restroom accessibility in these ZIP codes.
+
+Neutral areas (light colors) suggest no significant clustering, reflecting average restroom accessibility levels across parts of Queens, Brooklyn, and the Bronx.
+
+Cold spots or areas with no data (gray) are observed in regions like Staten Island and some peripheral areas, highlighting gaps in restroom density or missing data requiring further investigation.
+
+
+Top 5 ZIP Codes by Density
+```{r}
+# Extract Top 5 ZIP Codes by Density
+top_5_density <- zip_shapes %>%
+  st_drop_geometry() %>%  # Drop geometry for a cleaner table
+  arrange(desc(density)) %>%  # Sort by density in descending order
+  slice_head(n = 5)  # Select the top 5 rows
+
+# Display the Top 5 Table
+top_5_density %>%
+  select(zip_code, restroom_count, area_km2, density) %>%
+  kable(
+    caption = "Top 5 ZIP Codes by Restroom Density",
+    col.names = c("ZIP Code", "Restroom Count", "Area (km²)", "Density (Restrooms/km²)"),
+    digits = 2
+  )
+```
+The table shows the top 5 ZIP codes with the highest restroom densities in NYC, with ZIP code 10282 leading at 12.01 restrooms per square kilometer, likely reflecting its small area and relatively high restroom count. Other ZIP codes such as 11109, 10022, 10004, and 10017 also show high restroom densities, emphasizing well-served areas, potentially due to higher population or visitor traffic.
 
 
 ```{r}
-# Function to create the interactive map
-interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway) {
+interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway, zip_shapes) {
   # Define a custom yellow triangle icon for restrooms
   yellow_triangle_icon <- makeIcon(
     iconUrl = "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png",
     iconWidth = 20,
     iconHeight = 20
+  )
+  
+  # Define a color palette for Gi* Z-scores
+  pal <- colorNumeric(
+    palette = "Reds",
+    domain = zip_shapes$gi_star,
+    na.color = "gray"  # Color for NA values
   )
   
   leaflet() %>%
@@ -212,7 +343,7 @@ interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway
       radius = 5
     ) %>%
     
-    # Add subway locations as a layer
+    # Add underserved subway stations as a layer
     addCircleMarkers(
       data = underserved_subway,
       lng = ~station_longitude,
@@ -228,42 +359,44 @@ interactive_map <- function(restroom_cleaned, subway_cleaned, underserved_subway
       radius = 5
     ) %>%
     
+    # Add Getis-Ord Gi* Z-scores as a layer
+    addPolygons(
+      data = zip_shapes,
+      fillColor = ~pal(gi_star),
+      weight = 0.5,
+      color = "black",
+      fillOpacity = 0.7,
+      group = "Getis-Ord Gi*",
+      popup = ~paste0(
+        "<b>ZIP Code:</b> ", zip_code, "<br>",
+        "<b>Restrooms:</b> ", restroom_count, "<br>",
+        "<b>Density:</b> ", round(density, 2), " restrooms/km²<br>",
+        "<b>Gi* Z-Score:</b> ", round(gi_star, 2)
+      )
+    ) %>%
+    
     # Add layer control
     addLayersControl(
       baseGroups = c("CartoDB"),
-      overlayGroups = c("Restrooms", "Subway Stations", "Underserved Stations"),
+      overlayGroups = c("Restrooms", "Subway Stations", "Underserved Stations", "Getis-Ord Gi*"),
       options = layersControlOptions(collapsed = FALSE)
+    ) %>%
+    
+    # Add legend for Getis-Ord Gi* Z-scores
+    addLegend(
+      pal = pal,
+      values = zip_shapes$gi_star,
+      title = "Getis-Ord Gi*<br>Hot Spot Analysis",
+      na.label = "No Data",
+      position = "bottomright"
     )
 }
 
 # Render the map
-interactive_map(restroom_cleaned, subway_cleaned, underserved_subway)
+interactive_map(restroom_cleaned, subway_cleaned, underserved_subway, zip_shapes)
+
 ```
-This interactive map contains the location of restrooms and subway stations. You can play around of this map by select and deselect the layer of restrooms and subway station layer, zoom in and zoom out the map, and moving your cursor to each icon to discover the name and location of restrooms and stations. 
-
-## Kernel Density Estimation (KDE)
-```{r}
-# Convert the data to a point pattern object
-# Ensure the data contains 'restroom_longitude' and 'restroom_latitude'
-restroom_points <- as(restroom_sf, "Spatial")  # Convert sf object to Spatial object
-window <- owin(xrange = range(restroom_points@coords[,1]), 
-               yrange = range(restroom_points@coords[,2]))
-
-restroom_ppp <- ppp(
-  x = restroom_points@coords[,1], 
-  y = restroom_points@coords[,2], 
-  window = window
-)
-
-# Kernel density estimation
-kden <- density(restroom_ppp, sigma = 0.01)  # Adjust sigma (bandwidth) as needed
-
-# Plot the results
-plot(kden, main = "Kernel Density Estimation of Restroom Locations")
-```
-
-## Hot Spot Analysis (Getis-Ord Gi):
-Hot Spot Analysis using the Getis-Ord Gi* statistic is a spatial statistical method used to identify statistically significant clusters (hot spots or cold spots) of high or low values in geographic data. This technique helps determine areas where a phenomenon (e.g., restroom accessibility) is unusually concentrated or sparse.
+This interactive map displays the locations of restrooms and subway stations. You can explore the map by toggling layers for restrooms, subway stations, underserved stations, and Getis-Ord Gi* results, zooming in and out, and hovering over icons to view detailed information about the name and location of restrooms and stations.
 
 
 
