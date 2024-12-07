@@ -190,13 +190,15 @@ restroom_cleaned <- restroom_dirty %>%
       changing_stations %in% c("Yes, in single-stall all gender restroom only",
                                 "Yes, in women's restroom only",
                                 "Yes") ~ 1,
-    changing_stations %in% c("No", NA) ~ 0
+      changing_stations == "No" ~ 0,
+      TRUE ~ 0
 ),
     restroom_status = case_when(
       status %in% c("Not Operational",
                     "Closed for Construction",
                     "Closed") ~ 0,
-      status == "Operational" ~ 1
+      status == "Operational" ~ 1,
+      TRUE ~ 0
     )
   ) %>% 
   dplyr::select(
@@ -215,7 +217,9 @@ subway_with_restrooms <- st_join(subway_sf, restroom_sf, join = st_nearest_featu
 
 For restroom data, we factor the character variables (`status`, `open`,
 `accessibility`, `changing_stations`) into binary and categorical
-variables.
+variables. We handle NAs in `status` and `changing_stations` by
+assigning 0, NAs in the rest variables will be handled specific to each
+analysis.
 
 After cleaning, `restroom_cleaned` contains 1047 rows and 10 columns.
 

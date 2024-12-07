@@ -55,7 +55,7 @@ MacNeil Playground,Park,Multi-Stall W/M Restrooms,40.793522,-73.851378,"c(-73.85
 Vidalia Park,Park,Multi-Stall W/M Restrooms,40.844079,-73.881429,"c(-73.881429, 40.844079)",Seasonal,Fully Accessible,0,1
 Albert J. Parham Playground,Park,Multi-Stall W/M Restrooms,40.690233,-73.970509,"c(-73.970509, 40.690233)",Year Round,Fully Accessible,0,1
 Hester St Playground,Park,Multi-Stall W/M Restrooms,40.716728,-73.994082,"c(-73.994082, 40.716728)",Year Round,Fully Accessible,0,1
-"Mosholu Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.874388,-73.878386,"c(-73.878386, 40.874388)",Year Round,Fully Accessible,,1
+"Mosholu Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.874388,-73.878386,"c(-73.878386, 40.874388)",Year Round,Fully Accessible,0,1
 Astoria Park Zone 1,Park,Both Single-Stall All Gender and Multi-Stall W/M,40.77593,-73.925181,"c(-73.925181, 40.77593)",Seasonal,Fully Accessible,0,1
 St. Nicholas Park,Park,Multi-Stall W/M Restrooms,40.813711,-73.950928,"c(-73.950928, 40.813711)",Year Round,Not Accessible,0,1
 Virginia Principe Playground,Park,Multi-Stall W/M Restrooms,40.727226,-73.904336,"c(-73.904336, 40.727226)",Year Round,Not Accessible,0,1
@@ -64,7 +64,7 @@ Oracle Playground,Park,Multi-Stall W/M Restrooms,40.693786,-73.971605,"c(-73.971
 McGuire Fields,Park,,40.618582,-73.898792,"c(-73.898792, 40.618582)",Year Round,,0,1
 Louis Armstrong Playground,Park,Multi-Stall W/M Restrooms,40.754938,-73.855156,"c(-73.855156, 40.754938)",Seasonal,Not Accessible,0,1
 Lopez Playground,Park,Multi-Stall W/M Restrooms,40.61127,-74.085,"c(-74.085, 40.61127)",Year Round,Fully Accessible,0,1
-"Grand Concourse Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.84401,-73.910089,"c(-73.910089, 40.84401)",Year Round,Fully Accessible,,1
+"Grand Concourse Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.84401,-73.910089,"c(-73.910089, 40.84401)",Year Round,Fully Accessible,0,1
 Claremont Park Zone 1,Park,Multi-Stall W/M Restrooms,40.841506,-73.906836,"c(-73.906836, 40.841506)",Year Round,Fully Accessible,0,1
 East River Park Zone 5,Park,Multi-Stall W/M Restrooms,40.721796,-73.974048,"c(-73.974048, 40.721796)",Year Round,Not Accessible,0,1
 Hunts Point Playground,Park,Multi-Stall W/M Restrooms,40.814277,-73.88589,"c(-73.88589, 40.814277)",Year Round,Fully Accessible,0,1
@@ -86,7 +86,7 @@ Travers Park,Park,Multi-Stall W/M Restrooms,40.754374,-73.889478,"c(-73.889478, 
 McCarren Park Zone 3,Park,Both Single-Stall All Gender and Multi-Stall W/M,40.722025,-73.951842,"c(-73.951842, 40.722025)",Year Round,Fully Accessible,0,1
 "East Flushing Library, QPL",Library,Single-Stall All Gender Restroom(s),40.757554,-73.784304,"c(-73.784304, 40.757554)",Year Round,,1,1
 Allen Street Malls,Park,,40.719552,-73.990206,"c(-73.990206, 40.719552)",,,0,0
-"George Bruce Library, NYPL",Library,Single-Stall All Gender Restroom(s),40.813777,-73.957055,"c(-73.957055, 40.813777)",Year Round,Fully Accessible,,1
+"George Bruce Library, NYPL",Library,Single-Stall All Gender Restroom(s),40.813777,-73.957055,"c(-73.957055, 40.813777)",Year Round,Fully Accessible,0,1
 Seth Low Playground/ Bealin Square,Park,Multi-Stall W/M Restrooms,40.608262,-73.986506,"c(-73.986506, 40.608262)",Year Round,Fully Accessible,0,1
 Howard Bennett Playground,Park,Both Single-Stall All Gender and Multi-Stall W/M,40.813698,-73.938957,"c(-73.938957, 40.813698)",Year Round,Fully Accessible,0,1
 "Cypress Hills Library, BPL",Library,Single-Stall All Gender Restroom(s),40.672716,-73.874036,"c(-73.874036, 40.672716)",Year Round,Fully Accessible,1,1
@@ -182,7 +182,7 @@ Coney Island Beach Zone 7c,Park,Multi-Stall W/M Restrooms,40.571763,-73.998785,"
 Jennifer's Playground,Park,Multi-Stall W/M Restrooms,40.620343,-74.163512,"c(-74.163512, 40.620343)",Year Round,Fully Accessible,0,1
 Roebling Playground,Park,Multi-Stall W/M Restrooms,40.70611,-73.962367,"c(-73.962367, 40.70611)",Seasonal,Fully Accessible,0,1
 Harvey Playground,Park,Multi-Stall W/M Restrooms,40.782898,-73.823577,"c(-73.823577, 40.782898)",Seasonal,Not Accessible,0,1
-"Inwood Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.866961,-73.924338,"c(-73.924338, 40.866961)",Future,Fully Accessible,,0
+"Inwood Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.866961,-73.924338,"c(-73.924338, 40.866961)",Future,Fully Accessible,0,0
 Randall Playground,Park,Multi-Stall W/M Restrooms,40.819271,-73.849747,"c(-73.849747, 40.819271)",Year Round,Fully Accessible,0,1
 Glenwood Playground,Park,Multi-Stall W/M Restrooms,40.636661,-73.920089,"c(-73.920089, 40.636661)",Year Round,Fully Accessible,0,1
 Barretto Point Park,Park,Multi-Stall W/M Restrooms,40.805908,-73.888623,"c(-73.888623, 40.805908)",Year Round,Fully Accessible,0,1
@@ -213,7 +213,7 @@ Greeley Square Park,Park,Multi-Stall All Gender Restrooms,40.748533,-73.98846,"c
 Linden Park,Park,Multi-Stall W/M Restrooms,40.658259,-73.88747,"c(-73.88747, 40.658259)",Year Round,Fully Accessible,0,1
 Stroud Playground,Park,Multi-Stall W/M Restrooms,40.67499,-73.962244,"c(-73.962244, 40.67499)",Year Round,Not Accessible,0,1
 "Kew Gardens Hills Library, QPL",Library,Single-Stall All Gender Restroom(s),40.725957,-73.820759,"c(-73.820759, 40.725957)",Year Round,,1,1
-"Westchester Square Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.840876,-73.846732,"c(-73.846732, 40.840876)",Year Round,Not Accessible,,1
+"Westchester Square Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.840876,-73.846732,"c(-73.846732, 40.840876)",Year Round,Not Accessible,0,1
 Crocheron Park Zone 1,Park,Multi-Stall W/M Restrooms,40.772053,-73.769363,"c(-73.769363, 40.772053)",Year Round,Not Accessible,0,1
 Canarsie Park Zone 5,Park,,40.635988,-73.883204,"c(-73.883204, 40.635988)",Year Round,,0,1
 Mill Basin Marina,Park,,40.612465,-73.901723,"c(-73.901723, 40.612465)",Year Round,,0,0
@@ -258,7 +258,7 @@ Dag Hammarskjold Food Kiosk,Park,,40.752076,-73.968158,"c(-73.968158, 40.752076)
 Agnes Haywood Playground,Park,Multi-Stall W/M Restrooms,40.880494,-73.861748,"c(-73.861748, 40.880494)",Year Round,Fully Accessible,0,1
 Bath Beach Park,Park,Multi-Stall W/M Restrooms,40.602295,-74.011596,"c(-74.011596, 40.602295)",Seasonal,Fully Accessible,0,1
 Prospect Park Lakeside Center,Park,,40.657069,-73.96418,"c(-73.96418, 40.657069)",Year Round,,0,1
-"Harry Belafonte 115th Street Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.802988,-73.953532,"c(-73.953532, 40.802988)",Year Round,Fully Accessible,,1
+"Harry Belafonte 115th Street Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.802988,-73.953532,"c(-73.953532, 40.802988)",Year Round,Fully Accessible,0,1
 Twenty-Four Sycamores Park,Park,Multi-Stall W/M Restrooms,40.759419,-73.958863,"c(-73.958863, 40.759419)",Year Round,Fully Accessible,0,1
 John J Carty Park,Park,Multi-Stall W/M Restrooms,40.614496,-74.029411,"c(-74.029411, 40.614496)",Year Round,Not Accessible,0,1
 Catbird Playground,Park,Both Single-Stall All Gender and Multi-Stall W/M,40.773579,-73.945039,"c(-73.945039, 40.773579)",Year Round,Fully Accessible,0,1
@@ -311,7 +311,7 @@ Strawberry Playground,Park,Multi-Stall W/M Restrooms,40.709709,-73.955856,"c(-73
 "South Beach Library, NYPL",Library,Single-Stall All Gender Restroom(s),40.595811,-74.062982,"c(-74.062982, 40.595811)",Year Round,Fully Accessible,1,1
 Peters Field,Park,Multi-Stall W/M Restrooms,40.706435,-73.774661,"c(-73.774661, 40.706435)",Year Round,Not Accessible,0,1
 Leonardo Ingravallo Playground,Park,Multi-Stall W/M Restrooms,40.775968,-73.817167,"c(-73.817167, 40.775968)",Year Round,Not Accessible,0,1
-875 Third Avenue POPS,Privately Owned Public Space,Multi-Stall W/M Restrooms,40.757226,-73.969197,"c(-73.969197, 40.757226)",Year Round,Fully Accessible,,1
+875 Third Avenue POPS,Privately Owned Public Space,Multi-Stall W/M Restrooms,40.757226,-73.969197,"c(-73.969197, 40.757226)",Year Round,Fully Accessible,0,1
 Sumner Playground,Park,Multi-Stall W/M Restrooms,40.697156,-73.94283,"c(-73.94283, 40.697156)",Seasonal,Fully Accessible,0,1
 Rappaport Playground,Park,Multi-Stall W/M Restrooms,40.636784,-74.000795,"c(-74.000795, 40.636784)",Year Round,Not Accessible,0,1
 Riverbank Playground,Park,Multi-Stall W/M Restrooms,40.825617,-73.953889,"c(-73.953889, 40.825617)",Year Round,Partially Accessible,0,1
@@ -348,7 +348,7 @@ Judge Moses Weinstein Playground,Park,Multi-Stall W/M Restrooms,40.718693,-73.82
 "Throg's Neck Library, NYPL",Library,Single-Stall All Gender Restroom(s),40.822881,-73.819096,"c(-73.819096, 40.822881)",Year Round,Fully Accessible,0,1
 Pilgrim Hill & Conservatory Water,Park,Multi-Stall W/M Restrooms,40.773979,-73.966543,"c(-73.966543, 40.773979)",Year Round,Not Accessible,0,1
 Crotona Malls Zone 1,Park,Multi-Stall W/M Restrooms,40.842839,-73.88546,"c(-73.88546, 40.842839)",,Fully Accessible,0,0
-"Jackson Heights Library, QPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.750204,-73.885071,"c(-73.885071, 40.750204)",Year Round,,,1
+"Jackson Heights Library, QPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.750204,-73.885071,"c(-73.885071, 40.750204)",Year Round,,0,1
 "Bedford Library, BPL",Library,Single-Stall All Gender Restroom(s),40.68182,-73.956166,"c(-73.956166, 40.68182)",Year Round,Fully Accessible,1,0
 Owl's Head Park,Park,Multi-Stall W/M Restrooms,40.639297,-74.031998,"c(-74.031998, 40.639297)",Year Round,Fully Accessible,0,1
 Cedar Grove Beach Zone 2,Park,,40.559615,-74.101569,"c(-74.101569, 40.559615)",Seasonal,,0,1
@@ -455,7 +455,7 @@ Torsney Playground,Park,Multi-Stall W/M Restrooms,40.747265,-73.922042,"c(-73.92
 Morningside Playground,Park,Multi-Stall W/M Restrooms,40.806791,-73.957849,"c(-73.957849, 40.806791)",,Not Accessible,0,0
 Penn Station LIRR Restroom,Transit,,40.750588,-73.993581,"c(-73.993581, 40.750588)",Year Round,,0,1
 Westbourne Playground,Park,Multi-Stall W/M Restrooms,40.608307,-73.764591,"c(-73.764591, 40.608307)",Year Round,Not Accessible,0,1
-"Elmhurst Library, QPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.738563,-73.876823,"c(-73.876823, 40.738563)",Year Round,,,1
+"Elmhurst Library, QPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.738563,-73.876823,"c(-73.876823, 40.738563)",Year Round,,0,1
 Mill Pond Indoor Tennis,Park,,40.824175,-73.931564,"c(-73.931564, 40.824175)",Year Round,,0,1
 Orchard Beach Snack Bars & Mobile Units,Park,,40.865136,-73.794799,"c(-73.794799, 40.865136)",Year Round,,0,1
 Joseph Austin Playground,Park,Multi-Stall W/M Restrooms,40.715694,-73.801151,"c(-73.801151, 40.715694)",Year Round,Partially Accessible,0,1
@@ -470,14 +470,14 @@ Wright Brothers Playground,Park,Multi-Stall W/M Restrooms,40.831692,-73.9416,"c(
 Pelham Bay/ Split Rock Golf,Park,,40.880138,-73.806141,"c(-73.806141, 40.880138)",Year Round,,0,0
 Gerard P. Dugan Playground,Park,Multi-Stall W/M Restrooms,40.561561,-74.111472,"c(-74.111472, 40.561561)",Year Round,Fully Accessible,0,1
 Sherman Creek,Park,Both Single-Stall All Gender and Multi-Stall W/M,40.857796,-73.922035,"c(-73.922035, 40.857796)",Year Round,Fully Accessible,0,1
-"Library for the Performing Arts, Dorothy and Lewis B. Cullman Center Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.773515,-73.984548,"c(-73.984548, 40.773515)",Year Round,Fully Accessible,,1
+"Library for the Performing Arts, Dorothy and Lewis B. Cullman Center Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.773515,-73.984548,"c(-73.984548, 40.773515)",Year Round,Fully Accessible,0,1
 Saratoga Park,Park,Multi-Stall W/M Restrooms,40.68506,-73.919017,"c(-73.919017, 40.68506)",Year Round,Partially Accessible,0,1
 Bloomingdale Playground,Park,Multi-Stall W/M Restrooms,40.799368,-73.966214,"c(-73.966214, 40.799368)",Year Round,Fully Accessible,0,1
 Rose Hill Park,Park,Multi-Stall W/M Restrooms,40.861725,-73.890761,"c(-73.890761, 40.861725)",Seasonal,Fully Accessible,0,1
 Martin Luther King Jr. Playground,Park,Multi-Stall W/M Restrooms,40.667421,-73.890205,"c(-73.890205, 40.667421)",Year Round,Fully Accessible,0,1
 Slope Park Playground,Park,Multi-Stall W/M Restrooms,40.661302,-73.989333,"c(-73.989333, 40.661302)",Year Round,Not Accessible,0,1
 "Van Cortlandt Mansion, Tennis Courts, Memorial Grove",Park,,40.891109,-73.893936,"c(-73.893936, 40.891109)",Year Round,,0,1
-"Woodstock Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.820627,-73.904649,"c(-73.904649, 40.820627)",Year Round,Fully Accessible,,1
+"Woodstock Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.820627,-73.904649,"c(-73.904649, 40.820627)",Year Round,Fully Accessible,0,1
 Lookout Hill,Park,Multi-Stall W/M Restrooms,40.656907,-73.970375,"c(-73.970375, 40.656907)",Year Round,Not Accessible,0,1
 Flushing Meadows Golf Course,Park,,40.751447,-73.840083,"c(-73.840083, 40.751447)",Year Round,,0,0
 El Shabazz Playground,Park,Multi-Stall W/M Restrooms,40.682689,-73.930705,"c(-73.930705, 40.682689)",Year Round,Partially Accessible,0,1
@@ -493,7 +493,7 @@ Grand Central Parkway Gas,Park,,40.765016,-73.861689,"c(-73.861689, 40.765016)",
 Herald Square,Park,Multi-Stall All Gender Restrooms,40.750455,-73.987505,"c(-73.987505, 40.750455)",Year Round,Fully Accessible,0,1
 North Rochdale Playground,Park,Multi-Stall W/M Restrooms,40.680069,-73.775129,"c(-73.775129, 40.680069)",Year Round,Not Accessible,0,1
 Bayside Fields,Park,Both Single-Stall All Gender and Multi-Stall W/M,40.773053,-73.78496,"c(-73.78496, 40.773053)",Seasonal,Fully Accessible,0,1
-"Starvos Niarchos Foundation Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.7519,-73.9817,"c(-73.9817, 40.7519)",Year Round,Fully Accessible,,1
+"Starvos Niarchos Foundation Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.7519,-73.9817,"c(-73.9817, 40.7519)",Year Round,Fully Accessible,0,1
 Redfern Playground,Park,Multi-Stall W/M Restrooms,40.611049,-73.749098,"c(-73.749098, 40.611049)",Year Round,Fully Accessible,0,1
 "Kensington Library, BPL",Library,Single-Stall All Gender Restroom(s),40.6313,-73.975437,"c(-73.975437, 40.6313)",Year Round,Fully Accessible,1,1
 "Howard Beach Library, QPL",Library,Single-Stall All Gender Restroom(s),40.663819,-73.841804,"c(-73.841804, 40.663819)",Year Round,,1,1
@@ -506,7 +506,7 @@ Cherry Tree Park,Park,Both Single-Stall All Gender and Multi-Stall W/M,40.787168
 Hunters Point South,Park,Multi-Stall W/M Restrooms,40.738411,-73.960924,"c(-73.960924, 40.738411)",Year Round,Fully Accessible,0,1
 Drew Playground,Park,Multi-Stall W/M Restrooms,40.832982,-73.903326,"c(-73.903326, 40.832982)",Year Round,Fully Accessible,0,1
 Van Cortlandt Pool,Park,,40.890661,-73.897424,"c(-73.897424, 40.890661)",Year Round,,0,1
-"St. George Library Center, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.641808,-74.07668,"c(-74.07668, 40.641808)",Year Round,Fully Accessible,,1
+"St. George Library Center, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.641808,-74.07668,"c(-74.07668, 40.641808)",Year Round,Fully Accessible,0,1
 Crotona Park Indoor Tennis,Park,,40.839595,-73.895042,"c(-73.895042, 40.839595)",Year Round,,0,1
 Fermi Playground,Park,Multi-Stall W/M Restrooms,40.700313,-73.928534,"c(-73.928534, 40.700313)",Year Round,Not Accessible,0,1
 Forest Park Golf Course,Park,,40.699719,-73.86408,"c(-73.86408, 40.699719)",Year Round,,0,0
@@ -604,11 +604,11 @@ College Point Blvd Ballfields,Park,Multi-Stall W/M Restrooms,40.741924,-73.84796
 Midland Beach Zone 4,Park,,40.573949,-74.083588,"c(-74.083588, 40.573949)",Seasonal,,0,1
 Hutchinson River Parkway Gas,Park,,40.836702,-73.838373,"c(-73.838373, 40.836702)",Year Round,,0,1
 John Jay Park,Park,,40.769097,-73.949062,"c(-73.949062, 40.769097)",Year Round,,0,1
-"Francis Martin Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.85743,-73.909318,"c(-73.909318, 40.85743)",Year Round,Fully Accessible,,1
+"Francis Martin Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.85743,-73.909318,"c(-73.909318, 40.85743)",Year Round,Fully Accessible,0,1
 Carl Schurz Park Main Lawn,Park,Multi-Stall W/M Restrooms,40.773579,-73.945039,"c(-73.945039, 40.773579)",Year Round,Partially Accessible,0,1
 Locust Manor Playground,Park,Multi-Stall W/M Restrooms,40.685926,-73.756171,"c(-73.756171, 40.685926)",Year Round,Not Accessible,0,1
 Holy Cow Playground,Park,Multi-Stall W/M Restrooms,40.741371,-73.776439,"c(-73.776439, 40.741371)",Seasonal,Not Accessible,0,1
-"Mulberry Street Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.724148,-73.995686,"c(-73.995686, 40.724148)",Future,Fully Accessible,,0
+"Mulberry Street Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.724148,-73.995686,"c(-73.995686, 40.724148)",Future,Fully Accessible,0,0
 Clark Playground,Park,Multi-Stall W/M Restrooms,40.813973,-73.921217,"c(-73.921217, 40.813973)",Year Round,Fully Accessible,0,1
 Elmhurst Park,Park,Both Single-Stall All Gender and Multi-Stall W/M,40.730523,-73.885101,"c(-73.885101, 40.730523)",Year Round,Fully Accessible,0,1
 North Meadow Recreation Center,Park,,40.79115,-73.959598,"c(-73.959598, 40.79115)",Year Round,,0,1
@@ -632,7 +632,7 @@ Potomac Playground,Park,Multi-Stall W/M Restrooms,40.682054,-73.944239,"c(-73.94
 Schmul Park,Park,Multi-Stall W/M Restrooms,40.590111,-74.187877,"c(-74.187877, 40.590111)",Year Round,Fully Accessible,0,1
 "DeKalb Library, BPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.694825,-73.9284,"c(-73.9284, 40.694825)",Year Round,Partially Accessible,1,1
 Queensboro Oval Indoor Tennis,Park,,40.759246,-73.960029,"c(-73.960029, 40.759246)",Seasonal,,0,1
-"McGoldrick Library, QPL",Library,Multi-Stall All Gender Restrooms,40.763759,-73.809835,"c(-73.809835, 40.763759)",Year Round,,,1
+"McGoldrick Library, QPL",Library,Multi-Stall All Gender Restrooms,40.763759,-73.809835,"c(-73.809835, 40.763759)",Year Round,,0,1
 Fulton St (A-C) MTA Restroom,Transit,,40.710532,-74.009096,"c(-74.009096, 40.710532)",Year Round,,0,1
 De Hostos Playground,Park,,40.702544,-73.949544,"c(-73.949544, 40.702544)",,,0,0
 McLaughlin Park,Park,Multi-Stall W/M Restrooms,40.696674,-73.986049,"c(-73.986049, 40.696674)",Year Round,Not Accessible,0,1
@@ -649,7 +649,7 @@ Bowne Playground,Park,Multi-Stall W/M Restrooms,40.770424,-73.806335,"c(-73.8063
 Alice Kornegay Triangle,Park,Both Single-Stall All Gender and Multi-Stall W/M,40.806548,-73.935583,"c(-73.935583, 40.806548)",Year Round,Fully Accessible,0,1
 "Ozone Park Library, QPL",Library,Single-Stall All Gender Restroom(s),40.680875,-73.84649,"c(-73.84649, 40.680875)",Year Round,,1,1
 Bensonhurst Indoor Tennis,Park,,40.595081,-74.001441,"c(-74.001441, 40.595081)",Year Round,,0,1
-"Bloomingdale Library, NYPL",Library,Multi-Stall All Gender Restrooms,40.795882,-73.967608,"c(-73.967608, 40.795882)",Year Round,Fully Accessible,,1
+"Bloomingdale Library, NYPL",Library,Multi-Stall All Gender Restrooms,40.795882,-73.967608,"c(-73.967608, 40.795882)",Year Round,Fully Accessible,0,1
 Willowbrook Park Recreational Area,Park,Multi-Stall W/M Restrooms,40.604166,-74.158609,"c(-74.158609, 40.604166)",Year Round,Fully Accessible,0,1
 Raymond OConnor Park,Park,Both Single-Stall All Gender and Multi-Stall W/M,40.771005,-73.779037,"c(-73.779037, 40.771005)",Year Round,Fully Accessible,0,1
 St. Michael's Playground,Park,Multi-Stall W/M Restrooms,40.758313,-73.900281,"c(-73.900281, 40.758313)",,Not Accessible,0,0
@@ -703,7 +703,7 @@ Monsignor Raul Del Valle Square,Park,,40.8207,-73.890601,"c(-73.890601, 40.8207)
 Coney Island Beach Zone 6b,Park,Multi-Stall W/M Restrooms,40.57237,-73.98852,"c(-73.98852, 40.57237)",Seasonal,Fully Accessible,0,1
 Frank D. O'Connor Playground,Park,Multi-Stall W/M Restrooms,40.744392,-73.886861,"c(-73.886861, 40.744392)",Year Round,Not Accessible,0,1
 Space Time Playground,Park,Multi-Stall W/M Restrooms,40.822099,-73.859936,"c(-73.859936, 40.822099)",Year Round,Fully Accessible,0,1
-"Tompkins Square Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.727296,-73.980422,"c(-73.980422, 40.727296)",Year Round,Fully Accessible,,1
+"Tompkins Square Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.727296,-73.980422,"c(-73.980422, 40.727296)",Year Round,Fully Accessible,0,1
 South Shore Golf Course,Park,,40.551065,-74.205152,"c(-74.205152, 40.551065)",Year Round,,0,0
 Mahoney Playground,Park,Multi-Stall W/M Restrooms,40.643482,-74.086177,"c(-74.086177, 40.643482)",Year Round,Fully Accessible,0,1
 Beach 17th St. Playground,Park,Multi-Stall W/M Restrooms,40.594189,-73.750564,"c(-73.750564, 40.594189)",Year Round,Fully Accessible,0,1
@@ -727,7 +727,7 @@ Ferry Terminal,Park,,40.71498,-74.01753,"c(-74.01753, 40.71498)",Year Round,,0,1
 Cambria Playground,Park,Both Single-Stall All Gender and Multi-Stall W/M,40.688558,-73.742482,"c(-73.742482, 40.688558)",Year Round,Fully Accessible,0,1
 "125th Street Library, NYPL",Library,,40.803026,-73.934849,"c(-73.934849, 40.803026)",Future,,0,0
 Helen Marshall Playground,Park,Multi-Stall W/M Restrooms,40.765512,-73.87142,"c(-73.87142, 40.765512)",Year Round,Fully Accessible,0,1
-"Morrisania Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.831271,-73.901795,"c(-73.901795, 40.831271)",Year Round,Fully Accessible,,1
+"Morrisania Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.831271,-73.901795,"c(-73.901795, 40.831271)",Year Round,Fully Accessible,0,1
 Captain Tilly Park,Park,Multi-Stall W/M Restrooms,40.711437,-73.798241,"c(-73.798241, 40.711437)",,Fully Accessible,0,0
 Noble Playground,Park,Multi-Stall W/M Restrooms,40.836829,-73.87185,"c(-73.87185, 40.836829)",Year Round,Fully Accessible,0,1
 Markham Playground,Park,Multi-Stall W/M Restrooms,40.62307,-74.146331,"c(-74.146331, 40.62307)",Year Round,Not Accessible,0,1
@@ -787,7 +787,7 @@ Atlantic Ave Terminal LIRR Restroom,Transit,,40.684909,-73.977681,"c(-73.977681,
 Conference House Park Zone 2,Park,,40.50228,-74.251685,"c(-74.251685, 40.50228)",Year Round,,0,1
 McKinley Park Playground,Park,Multi-Stall W/M Restrooms,40.62657,-74.016733,"c(-74.016733, 40.62657)",Year Round,Not Accessible,0,1
 Yellowstone Park,Park,Multi-Stall W/M Restrooms,40.726241,-73.847893,"c(-73.847893, 40.726241)",Year Round,Fully Accessible,0,1
-"Bronx Library Center, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.862989,-73.894504,"c(-73.894504, 40.862989)",Year Round,Fully Accessible,,1
+"Bronx Library Center, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.862989,-73.894504,"c(-73.894504, 40.862989)",Year Round,Fully Accessible,0,1
 Claremont Park Zone 3,Park,Multi-Stall W/M Restrooms,40.837672,-73.908021,"c(-73.908021, 40.837672)",Year Round,Fully Accessible,0,1
 Chelsea Piers at Pier 61,Park,,40.748592,-74.008764,"c(-74.008764, 40.748592)",Year Round,Fully Accessible,0,1
 Havemeyer Playground,Park,Multi-Stall W/M Restrooms,40.829983,-73.847942,"c(-73.847942, 40.829983)",Year Round,Fully Accessible,0,1
@@ -803,7 +803,7 @@ Playground,Park,Multi-Stall W/M Restrooms,40.881137,-73.900773,"c(-73.900773, 40
 Van Voorhees Playground,Park,Multi-Stall W/M Restrooms,40.689659,-73.999568,"c(-73.999568, 40.689659)",Year Round,Fully Accessible,0,1
 Juniper North Playground Tennis Courts,Park,Multi-Stall W/M Restrooms,40.720668,-73.877441,"c(-73.877441, 40.720668)",Year Round,Not Accessible,0,1
 Sachkerah Woods Playground,Park,Multi-Stall W/M Restrooms,40.883684,-73.881574,"c(-73.881574, 40.883684)",Year Round,Fully Accessible,0,1
-"Wakefield Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.891093,-73.859583,"c(-73.859583, 40.891093)",Year Round,Fully Accessible,,1
+"Wakefield Library, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.891093,-73.859583,"c(-73.859583, 40.891093)",Year Round,Fully Accessible,0,1
 "Sedgwick Library, NYPL",Library,Single-Stall All Gender Restroom(s),40.849453,-73.917496,"c(-73.917496, 40.849453)",Year Round,Fully Accessible,0,1
 "Seaside Library, QPL",Library,Single-Stall All Gender Restroom(s),40.579413,-73.837748,"c(-73.837748, 40.579413)",Year Round,,1,0
 "Dongan Hills Library, NYPL",Library,Single-Stall All Gender Restroom(s),40.5904,-74.101139,"c(-74.101139, 40.5904)",Year Round,Fully Accessible,0,1
@@ -837,7 +837,7 @@ Carl Schurz Park Promenade,Park,Both Single-Stall All Gender and Multi-Stall W/M
 Cunningham Park Indoor Tennis,Park,,40.729396,-73.772786,"c(-73.772786, 40.729396)",Year Round,,0,1
 Auburndale Playground,Park,Multi-Stall W/M Restrooms,40.765867,-73.794508,"c(-73.794508, 40.765867)",Year Round,Not Accessible,0,1
 Hammel Playground,Park,Multi-Stall W/M Restrooms,40.588185,-73.809426,"c(-73.809426, 40.588185)",,Not Accessible,0,1
-"Langston Hughes Library, QPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.757586,-73.868201,"c(-73.868201, 40.757586)",Year Round,,,1
+"Langston Hughes Library, QPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.757586,-73.868201,"c(-73.868201, 40.757586)",Year Round,,0,1
 "Epiphany Library, NYPL",Library,Single-Stall All Gender Restroom(s),40.738095,-73.98205,"c(-73.98205, 40.738095)",Year Round,Fully Accessible,1,1
 "North Forest Park Library, QPL",Library,Single-Stall All Gender Restroom(s),40.711165,-73.853674,"c(-73.853674, 40.711165)",Year Round,,1,1
 Beach 9th St. Playground,Park,Multi-Stall W/M Restrooms,40.595625,-73.744565,"c(-73.744565, 40.595625)",Seasonal,Not Accessible,0,1
@@ -847,7 +847,7 @@ Silver Lake Golf Course,Park,,40.623055,-74.099068,"c(-74.099068, 40.623055)",Ye
 Slattery Playground,Park,Multi-Stall W/M Restrooms,40.857148,-73.898224,"c(-73.898224, 40.857148)",Year Round,Fully Accessible,0,1
 Berriman Playground,Park,Multi-Stall W/M Restrooms,40.656996,-73.869536,"c(-73.869536, 40.656996)",Year Round,Fully Accessible,0,1
 Foster Park Zone 1,Park,Multi-Stall W/M Restrooms,40.831188,-73.92471,"c(-73.92471, 40.831188)",Year Round,Fully Accessible,0,1
-"Poppenhusen Library, QPL",Library,Multi-Stall W/M Restrooms,40.786221,-73.846019,"c(-73.846019, 40.786221)",Year Round,,,1
+"Poppenhusen Library, QPL",Library,Multi-Stall W/M Restrooms,40.786221,-73.846019,"c(-73.846019, 40.786221)",Year Round,,0,1
 Railroad Playground,Park,Multi-Stall W/M Restrooms,40.64924,-73.914041,"c(-73.914041, 40.64924)",Year Round,Fully Accessible,0,1
 Harmony Playground,Park,Multi-Stall W/M Restrooms,40.663406,-73.976656,"c(-73.976656, 40.663406)",Seasonal,Not Accessible,0,1
 Mosholu Parkway Zone 4,Park,,40.868948,-73.88126,"c(-73.88126, 40.868948)",,,0,0
@@ -906,7 +906,7 @@ Mosholu Golf Course,Park,,40.887057,-73.884205,"c(-73.884205, 40.887057)",Year R
 Bayswater Playground,Park,Multi-Stall W/M Restrooms,40.598771,-73.767504,"c(-73.767504, 40.598771)",Year Round,Fully Accessible,0,1
 Central Park West,Park,Multi-Stall W/M Restrooms,40.769186,-73.980801,"c(-73.980801, 40.769186)",Seasonal,Fully Accessible,0,1
 East River Waterfront Esplanade Zone 1,Park,Multi-Stall W/M Restrooms,40.704736,-74.003405,"c(-74.003405, 40.704736)",Year Round,Fully Accessible,0,1
-"Stephen A. Schwarzman Building, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.753213,-73.982232,"c(-73.982232, 40.753213)",Year Round,Fully Accessible,,1
+"Stephen A. Schwarzman Building, NYPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.753213,-73.982232,"c(-73.982232, 40.753213)",Year Round,Fully Accessible,0,1
 Poor Richard's Playground,Park,Multi-Stall W/M Restrooms,40.792986,-73.943109,"c(-73.943109, 40.792986)",,Fully Accessible,0,0
 St Mary's Playground East,Park,Multi-Stall W/M Restrooms,40.809905,-73.910486,"c(-73.910486, 40.809905)",Year Round,Fully Accessible,0,1
 "Maspeth Library, QPL",Library,Single-Stall All Gender Restroom(s),40.727004,-73.893106,"c(-73.893106, 40.727004)",Year Round,,1,1
@@ -956,10 +956,10 @@ Alley Pond Park Zone 2,Park,Multi-Stall W/M Restrooms,40.741956,-73.739958,"c(-7
 Newtown Playground,Park,Multi-Stall W/M Restrooms,40.73625,-73.869826,"c(-73.869826, 40.73625)",Seasonal,Not Accessible,0,1
 Prospect Park Indoor Tennis,Park,,40.651267,-73.970257,"c(-73.970257, 40.651267)",Year Round,,0,1
 Grady Playground,Park,Multi-Stall W/M Restrooms,40.582536,-73.964425,"c(-73.964425, 40.582536)",,Not Accessible,0,0
-725 Fifth Avenue POPS,Privately Owned Public Space,Multi-Stall W/M Restrooms,40.762319,-73.973895,"c(-73.973895, 40.762319)",Year Round,,,1
+725 Fifth Avenue POPS,Privately Owned Public Space,Multi-Stall W/M Restrooms,40.762319,-73.973895,"c(-73.973895, 40.762319)",Year Round,,0,1
 St. Nicholas Playground South,Park,Both Single-Stall All Gender and Multi-Stall W/M,40.811069,-73.947207,"c(-73.947207, 40.811069)",,Fully Accessible,0,0
 "Morningside Heights Library, NYPL",Library,Single-Stall All Gender Restroom(s),40.806139,-73.964777,"c(-73.964777, 40.806139)",Year Round,Fully Accessible,1,1
-"East Elmhurst Library, QPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.76243,-73.873868,"c(-73.873868, 40.76243)",Year Round,,,1
+"East Elmhurst Library, QPL",Library,Both Single-Stall All Gender and Multi-Stall W/M,40.76243,-73.873868,"c(-73.873868, 40.76243)",Year Round,,0,1
 Christopher J. Igneri Playground,Park,Multi-Stall W/M Restrooms,40.60873,-74.119467,"c(-74.119467, 40.60873)",Year Round,Fully Accessible,0,1
 Silent Springs Playground,Park,Multi-Stall W/M Restrooms,40.749652,-73.823162,"c(-73.823162, 40.749652)",Seasonal,Fully Accessible,0,1
 Fresh Meadows Playground,Park,Multi-Stall W/M Restrooms,40.734447,-73.796195,"c(-73.796195, 40.734447)",,Not Accessible,0,1

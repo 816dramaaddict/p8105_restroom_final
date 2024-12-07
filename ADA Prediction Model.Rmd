@@ -1,12 +1,13 @@
 ---
 title: "ADA Accessibility Prediction"
-author: "Rita Wang"
-date: "2024-12-07"
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
 ---
 
 ```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
-library(tidyverse)
 library(sf)
 library(purrr)
 library(tidyverse)
@@ -67,6 +68,7 @@ summary(ada_model)
 table = head(broom::tidy(ada_model), 31)
 knitr::kable(table)
 ```
+Based on this output, we see that the restroom location, ramp entrance types and partial staff at train stations are highly significant predictors of a public restroom being fully ADA accessible. For public restrooms that are partially ADA accessible, restroom location, ramp entrance types and no staff members at train stations are strong predictors. Variables such as easement entrance type, elevator entrance type, and stairs entrance type for full ADA accessibility have high p-values, indicating weak evidence of their association with a restroom being fully ADA accessible. Potential multicollinearity or insufficient data may have resulted in very large or null statistical values on escalator entrance type and ramp entrance type.
 
 ```{r testing_model, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
 predicted_accessibility = predict(ada_model, restroom_subway_data)
@@ -80,4 +82,4 @@ accuracy = print(paste(accuracy, "%"))
 ```
 **Accuracy:**
 
-When testing the prediction model on the public restroom and train station data, there is an approximate of `r accuracy`.
+When testing the prediction model on the public restroom and train station data, there is an approximate of `r accuracy` accuracy, which may be due to outliers, missing data, or unequal distribution of data among different categories of a variable.
