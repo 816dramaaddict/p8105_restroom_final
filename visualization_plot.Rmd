@@ -1,10 +1,12 @@
 ---
-title: "visualization_plots"
-author: "Huiyan Ni"
-date: "2024-12-07"
-output: html_document
+title: "visualization_plot"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_float: true
 ---
-```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
+```{r default_setting, include=FALSE}
 library(tidyverse)
 library(sf)
 library(ggplot2)
@@ -27,7 +29,7 @@ knitr::opts_chunk$set(
 theme_set(theme_bw() + theme(legend.position = "bottom"))
 ```
 
-```{r clean_restroom_data}
+```{r clean_restroom_data,echo = FALSE, message = FALSE, warning = FALSE}
 # Import data
 restroom_cleaned = read_csv(here::here("./Data/Public_Restrooms_20241203.csv")) %>% 
   janitor::clean_names()
@@ -80,7 +82,7 @@ restroom_df = restroom_cleaned %>%
 ```
 
 
-```{r clean_subway_data}
+```{r clean_subway_data, echo = FALSE, message = FALSE, warning = FALSE}
 # Load the dataset
 subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv"))
 
