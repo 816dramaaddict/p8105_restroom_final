@@ -1,0 +1,25 @@
+---
+title: "When Nature Calls on the Subway: Mapping NYC Restroom Accessibility"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+<div style="width: 100%; height: 300px; overflow: hidden; position: relative; margin-bottom: 20px;">
+  <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcGxkd3h4bjN3a2ZtOHNjYXViZXg1Ym84Y3JrdmVyaThha2g2YWN6YyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ogwJkeUuqadDmehSt9/giphy.webp" 
+       alt="Subway Banner" 
+       style="width: 100%; height: 100%; object-fit: cover; position: absolute;">
+</div>
+
+
+# Welcome
+
+Restrooms are a vital yet often overlooked component of public infrastructure, especially in bustling cities like New York. The content of this website examines restroom accessibility near NYC subway stations, focusing on potential associations between restroom availability, subway station characteristics, and accessibility features for individuals with disabilities.
+
+# Screencast
+
+
+# Plan Your Next Restroom Stop!
+
+Check out our [interactive maps](Hotspot.html) to plan your next restroom stop. Learn about where you can find a restroom, its proximity to a subway stop, and more!

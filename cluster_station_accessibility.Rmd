@@ -21,10 +21,11 @@ library(klaR)
 library(knitr)
 library(kableExtra)
 library(leaflet)
+library(stats)
 ```
  
 
-# How Accessible Subways Are?
+# Subway stations' accesibility features
 
 ```{r}
 subway_cleaned = read_csv("Data/cleaned_subway_data.csv")
@@ -34,16 +35,11 @@ nyc_map = st_read(here::here('NYC', 'nyc.shp'), quiet = TRUE)
 nycmap = st_transform(nyc_map, crs = 4326)
 ```
 
-<br><br>
+Here, we investigate various features and overall accessibility levels of subway stations to gain insight into how accessible NYC’s subway stations truly are.
 
-### Are there ADA compliances?
+### ADA compliances
 
-:::: {style="display: flex;"}
-
-::: {}
-
-
-```{r, fig.align='center', fig.width=8, fig.height=8}
+```{r}
 subway_cleaned %>% 
   ggplot() +
     geom_sf(
@@ -63,52 +59,11 @@ subway_cleaned %>%
 
 ```
 
-:::
-  
-  
-:::{}
+`ada` compliance ensures that individuals with disabilities can safely and easily access subway stations. In the accompanying plot, each dot represents a station, and we can see that NYC’s stations generally do not perform well in terms of ADA compliance...
 
-<br><br>
-<br><br>
+### Free Cross Over
 
-```{r, fig.align='center', fig.width=4, fig.height=3.5, fig.align='center'}
-subway_cleaned %>% 
-  group_by(ada) %>% 
-  count(ada) %>% 
-  plot_ly (x = ~ada, 
-           y = ~n, 
-           color = ~ada,
-           type = "bar") %>% 
-  layout(
-    xaxis = list(title = "Ada Complaince"),   
-    yaxis = list(title = "Number of Stations") 
-  )
-```
-
-:::
-  
-::::
-
-### What are their entrance types?
-
-```{r}
-subway_cleaned %>% 
-  group_by(entrance_type) %>% 
-  count(entrance_type) %>% 
-  ungroup() %>%
-  mutate(entrance_type = fct_reorder(entrance_type, n, .desc = TRUE)) %>%
-  plot_ly (x = ~entrance_type, y = ~n, 
-           color = ~entrance_type,
-           type = "bar", colors = "viridis") %>% 
-  layout(
-    xaxis = list(title = "Entrance Type"),   
-    yaxis = list(title = "Number of Stations")
-  )
-```
-
-### Other Accessibilities and Amenities
-
-```{r}
+```{r, warning = FALSE}
 subway_cleaned %>% 
   ggplot() +
     geom_sf(
@@ -124,53 +79,15 @@ subway_cleaned %>%
     title.position = "top",
     override.aes = list(size = 3))) +
   labs(color = "Free Crossover")
-
-subway_cleaned %>% 
-  group_by(free_crossover) %>% 
-  count(free_crossover) %>% 
-  plot_ly (x = ~free_crossover, 
-           y = ~n, 
-           color = ~free_crossover,
-           type = "bar") %>% 
-  layout(
-    xaxis = list(title = "Free Crossover"),   
-    yaxis = list(title = "Number of Stations") 
-  )
 ```
 
-```{r}
-subway_cleaned %>%
-  group_by(staffing) %>%
-  count(staffing) %>%
-  ungroup() %>%
-  mutate(staffing = fct_reorder(staffing, n, .desc = TRUE)) %>%
-  plot_ly(
-    x = ~staffing, 
-    y = ~n,
-    color = ~staffing,
-    type = "bar", 
-    colors = "viridis"
-  ) %>%
-  layout(
-    xaxis = list(title = "Staffing"),   
-    yaxis = list(title = "Number of Stations")
-  )
-```
+As the most complex subway system in the world, however, the NYC Subway does provide free crossover points in most of its stations. With this understanding of both the weaknesses (ADA compliance) and strengths (free crossover points) in mind, we now turn our attention to evaluating the overall accessibility performance of the city’s subway stations.
 
+# How accessible stations are overall?
 
-# Cluster Subway's Accessibility
+### Rank the accessibility of stations,
 
-### When NOT considering restroom access,
-
-```{r}
-# Convert binary variable to factors
-subway_cleaned <- subway_cleaned %>% 
-  mutate(
-    ada <- factor(ada, levels = c("FALSE", "TRUE")),
-    free_crossover <- factor(free_crossover, levels = c("FALSE", "TRUE"))
-  )
-  
-
+```{r, warning = FALSE}
 # Select the Variables for Clustering
 clustering_data <- subway_cleaned %>%
   dplyr::select(entrance_type, staffing, ada, free_crossover, station_latitude, station_longitude, station_name)
@@ -178,14 +95,48 @@ clustering_data <- subway_cleaned %>%
 set.seed(123)  # For reproducibility
 km_result <- clustering_data %>% 
   dplyr::select(-station_latitude, -station_longitude, -station_name) %>% 
-  kmodes(modes = 3, iter.max = 10)
+  kmodes(modes = 3)
 ```
 
+We cluster the stations into three groups (levels) of overall accessibility based on their internal accessibility features.
 
 ```{r}
 clustering_data$.cluster <- factor(km_result$cluster)
 
+scenario_counts <- clustering_data %>%
+  mutate(
+    scenario = case_when(
+      ada == "TRUE" & free_crossover == "TRUE" ~ "ADA=TRUE, Free=TRUE",
+      ada == "FALSE" & free_crossover == "FALSE" ~ "ADA=FALSE, Free=FALSE",
+      ada == "FALSE" & free_crossover == "TRUE" ~ "ADA=FALSE, Free=TRUE",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  filter(!is.na(scenario)) %>%
+  group_by(scenario, .cluster) %>%
+  summarise(n = n(), .groups = "drop")
 
+plot_ly(
+  data = scenario_counts,
+  x = ~scenario,
+  y = ~n,
+  color = ~.cluster,
+  type = "bar"
+) %>%
+  layout(
+    title = "Count of Stations by Scenario and Cluster",
+    xaxis = list(title = "Scenario"),
+    yaxis = list(title = "Count of Stations"),
+    barmode = "group",
+    bargap = 0.2
+  )
+
+
+```
+
+From the plot, we can see that stations with the highest accessibility levels are less likely to have both ADA compliance and `free_crossover` points, while the lowest accessibility stations are more likely to have neither. In scenarios where stations only offer `free_crossover`, the more accessible a station is overall, the less likely it is to only have that one feature. However, most of the stations only meet the basic amenity standard of providing free crossover.
+
+```{r}
 # Define a Mode function
 Mode <- function(x) {
   ux <- unique(x)
@@ -194,11 +145,15 @@ Mode <- function(x) {
 
 cluster_profiles <- clustering_data %>%
   group_by(.cluster) %>%
+  dplyr::select(-station_latitude, -station_longitude) %>% 
+  dplyr::select(station_name, everything()) %>% 
   summarise(across(everything(), ~ Mode(.x)))
 
 knitr::kable(cluster_profiles)
 
 ```
+
+As we display the results of our model, all dominant features tend to appear similar across the clusters. This outcome likely occurs due to the uneven distribution of certain categorical variables, as reflected in our visualization section.
 
 ```{r}
 clustering_data <- clustering_data %>% 
@@ -207,7 +162,9 @@ clustering_data <- clustering_data %>%
       .cluster == 1 ~ "High Accessibility",
       .cluster == 2 ~ "Medium Accessibility",
       .cluster == 3 ~ "Low Accessibility"
-    )
+    ),
+    accessibility_level = factor(accessibility_level, 
+                                 levels = c("High Accessibility", "Medium Accessibility", "Low Accessibility"))
   )
 
 pal <- leaflet::colorFactor(
@@ -221,7 +178,7 @@ leaflet() |>
              lng = ~station_longitude,
              lat = ~station_latitude,
              label = ~station_name,
-             radius = 3,
+             radius = 4,
              color = NA,
              # color = ~pal(accessibility_level),
              fillColor = ~pal(accessibility_level),
@@ -241,52 +198,37 @@ leaflet() |>
   
 ```
 
+Next, we examine where high- and low-accessibility stations are located in the city. It appears that areas with a high concentration of low-accessibility stations include Downtown Manhattan, the Bronx, and Downtown Brooklyn.
 
 ### When considering restroom access,
 
-```{r}
+```{r, warning = FALSE}
 subway_with_restroom = read_csv("Data/cleaned_subway_restroom_data.csv")
 
 subway_with_restroom <- subway_with_restroom %>% 
-  mutate(
-    ada = factor(ada, levels = c("FALSE", "TRUE")),
-    free_crossover = factor(free_crossover, levels = c("FALSE", "TRUE")),
-    #convert to categorical
-    restroom_changing_stations = factor(
-      restroom_changing_stations,
-      levels = c(0, 1),
-      labels = c("FALSE", "TRUE")
-    ),
-    restroom_status = factor(
-      restroom_status,
-      levels = c(0, 1),
-      labels = c("FALSE", "TRUE")
-    ),
-    restroom_accessibility = fct_explicit_na(restroom_accessibility, na_level = "Unknown"),
-    restroom_open = fct_explicit_na(restroom_open, na_level = "Unknown")
-  ) %>% 
-    mutate(
-    entrance_type = factor(
-      entrance_type,
-      levels = c("Stair", "Easement", "Door", "Walkway", "Escalator", "Ramp", "Elevator")
-    )
-  ) %>% 
-  mutate(
-    staffing = factor(
-      staffing,
-      levels = c("NONE", "Spc Ev", "PART", "FULL")
-    )
-  )
+   mutate(
+#     #convert to logical
+     restroom_changing_stations_logic = as.logical(restroom_changing_stations),
+     restroom_status_logic = as.logical(restroom_status),
+     restroom_accessibility = fct_explicit_na(restroom_accessibility, na_level = "Unknown"),
+     restroom_open = fct_explicit_na(restroom_open, na_level = "Unknown")
+   )
+```
+
+
+We import data on subway stations along with information on their closest accessible restrooms. We then adjust the dataset to handle missing values and ensure that variables (`restroom_changing_stations`, `restroom_status`, `restroom_accessibility`, `restroom_open`) are suitable for k-modes clustering.
+
+```{r}
 
 # Select the Variables for Clustering
 clustering_merged_data <- subway_with_restroom %>%
   dplyr::select(entrance_type, staffing, ada, free_crossover, station_latitude, station_longitude, station_name,
-                restroom_open, restroom_accessibility, restroom_changing_stations, restroom_status)
-
+                restroom_open, restroom_accessibility,restroom_changing_stations_logic, restroom_status_logic)
+             
 set.seed(123)  # For reproducibility
 km_result2 <- clustering_merged_data %>% 
   dplyr::select(-station_latitude, -station_longitude, -station_name) %>% 
-  klaR::kmodes(modes = 3, iter.max = 10)
+  klaR::kmodes(modes = 3)
 
 clustering_merged_data$.cluster <- factor(km_result2$cluster)
 
@@ -299,8 +241,71 @@ Mode_for_merged <- function(x) {
 
 cluster_merged_profiles <- clustering_merged_data %>%
   group_by(.cluster) %>%
+  dplyr::select(-station_latitude, -station_longitude) %>% 
+  dplyr::select(station_name, everything()) %>% 
   summarise(across(everything(), ~ Mode_for_merged(.x)))
 
 knitr::kable(cluster_merged_profiles)
 ```
 
+From the table of our model fitting result, we speculate that the `restroom_accessibility` has significant effect on the cluster result.
+
+```{r}
+clustering_merged_data %>%
+  group_by(.cluster, restroom_accessibility) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  arrange(.cluster, restroom_accessibility) %>% 
+  knitr::kable()
+```
+
+From the model’s results, we speculate that restroom_accessibility has a significant effect on the clustering outcomes. Most high-accessibility stations have fully accessible restrooms nearby, while medium- and low-accessibility stations often lack accessible restrooms or have missing data for those amenities. This finding supports our speculation that `restroom_accessibility` is a dominant factor in the model.
+
+```{r}
+clustering_merged_data <- clustering_merged_data %>% 
+  mutate(
+    accessibility_level = case_when(
+      .cluster == 1 ~ "High Accessibility",
+      .cluster == 2 ~ "Medium Accessibility",
+      .cluster == 3 ~ "Low Accessibility"
+    )
+  )
+
+pal <- leaflet::colorFactor(
+  palette = c("chartreuse", "darkgoldenrod1", "brown2"),  # Adjust colors as needed
+  domain = clustering_merged_data$accessibility_level
+)
+
+leaflet() |>
+  addTiles() |>  
+  addCircleMarkers(data = clustering_merged_data,
+             lng = ~station_longitude,
+             lat = ~station_latitude,
+             label = ~station_name,
+             radius = 4,
+             color = NA,
+             # color = ~pal(accessibility_level),
+             fillColor = ~pal(accessibility_level),
+             stroke = TRUE, fillOpacity = 0.75,
+             popup = ~paste("Ada:", ada,
+                            "<br> Staffing:", staffing,
+                            "<br> Entrance type:", entrance_type,
+                            "<br> Free crossover:", free_crossover)) |>
+  addProviderTiles(providers$CartoDB.Positron) |>
+  addLegend(
+    "bottomright",
+    pal = pal,
+    values = clustering_merged_data$accessibility_level,
+    title = "Accessibility Level",
+    opacity = 1
+  )
+```
+
+The distribution plot also aligns with our earlier speculation.
+
+# Discussion
+
+- There are large proportion of variables in `subway_clean` are un-evenly distributed
+
+- In our analysis, we only include the restroom that is closest to each stations
+
+- One potential solution is to balance or reweight the data to reduce the impact of uneven distributions and incorporate multiple nearby restrooms into the analysis to gain a more comprehensive understanding of accessibility.

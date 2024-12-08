@@ -1,8 +1,7 @@
 ---
 title: "visualization_plots"
-author: "Huiyan Ni"
-date: "2024-12-07"
 output: html_document
+code_folding: hide
 ---
 ```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}
 library(tidyverse)
@@ -27,7 +26,7 @@ knitr::opts_chunk$set(
 theme_set(theme_bw() + theme(legend.position = "bottom"))
 ```
 
-```{r clean_restroom_data}
+```{r clean_restroom_data, echo = FALSE, message = FALSE, warning = FALSE}
 # Import data
 restroom_cleaned = read_csv(here::here("./Data/Public_Restrooms_20241203.csv")) %>% 
   janitor::clean_names()
@@ -80,7 +79,7 @@ restroom_df = restroom_cleaned %>%
 ```
 
 
-```{r clean_subway_data}
+```{r clean_subway_data, echo = FALSE, message = FALSE, warning = FALSE}
 # Load the dataset
 subway_df = read_csv(here::here("./Data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv"))
 
@@ -102,7 +101,7 @@ subway_cleaned = subway_df %>%
 
 
 ## restroom
-```{r restroom location_type barplot}
+```{r restroom location_type barplot, echo = FALSE, message = FALSE, warning = FALSE}
 restroom_location_bar = restroom_cleaned |> 
   group_by(location_type) |> 
   count(location_type) |> 
@@ -119,7 +118,7 @@ restroom_location_bar = restroom_cleaned |>
 
 
 
-```{r restroom open}
+```{r restroom open, echo = FALSE, message = FALSE, warning = FALSE}
 restroom_open_bar = restroom_cleaned |> 
   filter(!is.na(open))|>
   group_by(open) |> 
@@ -138,7 +137,7 @@ restroom_open_bar = restroom_cleaned |>
 ```
 
 
-```{r}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 location_type_open <- 
   restroom_cleaned |> 
   filter(!is.na(open)) |> 
@@ -170,7 +169,7 @@ location_type_open |>
 
 From the plot, we can get that the open type is related to location type. All future open-status restrooms are located in library. All seasonal open-status restrooms are located in park.  
 
-```{r restroom accessibility}
+```{r restroom accessibility, echo = FALSE, message = FALSE, warning = FALSE}
 restroom_accessibility_bar = restroom_cleaned |> 
   filter(!is.na(accessibility))|>
   group_by(accessibility) |> 
@@ -187,7 +186,7 @@ restroom_accessibility_bar = restroom_cleaned |>
  restroom_accessibility_bar
 ```
 
-```{r restroom type}
+```{r restroom type, echo = FALSE, message = FALSE, warning = FALSE}
 restroom_type_bar = restroom_cleaned |> 
   filter(!is.na(restroom_type))|>
   group_by(restroom_type) |> 
@@ -206,7 +205,7 @@ restroom_type_bar = restroom_cleaned |>
 ```
 
 ## subway
-```{r subway vending}
+```{r subway vending, echo = FALSE, message = FALSE, warning = FALSE}
 subway_vending_bar = subway_cleaned |> 
   group_by(vending) |> 
   count(vending, name = "n") |> 
@@ -223,7 +222,7 @@ subway_vending_bar = subway_cleaned |>
 ```
 
 
-```{r subway entrance_type}
+```{r subway entrance_type, echo = FALSE, message = FALSE, warning = FALSE}
 subway_entrance_bar = subway_cleaned |> 
   group_by(entrance_type) |> 
   count(entrance_type, name = "n") |> 
@@ -239,7 +238,7 @@ subway_entrance_bar = subway_cleaned |>
 
 ```
 
-```{r }
+```{r, echo = FALSE, message = FALSE, warning = FALSE }
 entrance_type_ada <- 
   subway_cleaned |> 
   group_by(entrance_type, ada) |> 
