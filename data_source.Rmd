@@ -11,7 +11,7 @@ output:
 The data for our project was sourced from [NYC Open Data](https://data.cityofnewyork.us/City-Government/Public-Restrooms/i7jb-7jku/about_data) and the NYC Transit Data that was shared with the p8105 for homework assignment two.
 
 
-# Data Dictionary
+## Data Dictionary
 The raw public restroom and train station dataset we utilized can be found [here](https://github.com/816dramaaddict/p8105_restroom_final.github.io/tree/main/Data), and the zip code data we utilized can be found [here](https://github.com/816dramaaddict/p8105_restroom_final.github.io/tree/main/NYC). Our cleaned merged dataset of the public restroom and train station datasets, available on our project [github](https://github.com/816dramaaddict/p8105_restroom_final.github.io/tree/main/Data), has 356 observations. The following are the variables that are used for this project:
 
 * _line_: train station line
@@ -49,3 +49,16 @@ The raw public restroom and train station dataset we utilized can be found [here
 * _MODZCTA_: zip code of NYC
 
 * label: 
+
+## Exploratory Analysis
+
+:)
+
+## Additional Analysis
+
+:)
+
+## References
+
+  1. [https://data.cityofnewyork.us/City-Government/Public-Restrooms/i7jb-7jku](https://data.cityofnewyork.us/City-Government/Public-Restrooms/i7jb-7jku)
+  2. 
