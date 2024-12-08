@@ -103,6 +103,12 @@ km_result <- clustering_data %>%
 clustering_data$.cluster <- factor(km_result$cluster)
 
 
+clustering_data %>%
+  group_by(.cluster, ada, free_crossover) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  arrange(.cluster, ada, free_crossover) %>% 
+  knitr::kable()
+
 # Define a Mode function
 Mode <- function(x) {
   ux <- unique(x)
@@ -116,7 +122,6 @@ cluster_profiles <- clustering_data %>%
   summarise(across(everything(), ~ Mode(.x)))
 
 knitr::kable(cluster_profiles)
-print(km_result$modes)
 
 ```
 

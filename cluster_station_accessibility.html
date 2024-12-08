@@ -6890,7 +6890,90 @@ km_result &lt;- clustering_data %&gt;%
 <pre class="r"><code>clustering_data$.cluster &lt;- factor(km_result$cluster)
 
 
-# Define a Mode function
+clustering_data %&gt;%
+  group_by(.cluster, ada, free_crossover) %&gt;%
+  summarise(n = n(), .groups = &quot;drop&quot;) %&gt;%
+  arrange(.cluster, ada, free_crossover) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">.cluster</th>
+<th align="left">ada</th>
+<th align="left">free_crossover</th>
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">77</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="right">20</td>
+</tr>
+<tr class="odd">
+<td align="left">2</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">26</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">84</td>
+</tr>
+<tr class="odd">
+<td align="left">2</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="right">16</td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="right">86</td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">TRUE</td>
+<td align="left">TRUE</td>
+<td align="right">15</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code># Define a Mode function
 Mode &lt;- function(x) {
   ux &lt;- unique(x)
   ux[which.max(tabulate(match(x, ux)))]
@@ -6949,11 +7032,6 @@ knitr::kable(cluster_profiles)</code></pre>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>print(km_result$modes)</code></pre>
-<pre><code>##   entrance_type staffing   ada free_crossover
-## 1         Stair     FULL FALSE           TRUE
-## 2         Stair     FULL FALSE           TRUE
-## 3         Stair     FULL FALSE           TRUE</code></pre>
 <pre class="r"><code>clustering_data &lt;- clustering_data %&gt;% 
   mutate(
     accessibility_level = case_when(
