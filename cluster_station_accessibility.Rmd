@@ -35,7 +35,7 @@ nyc_map = st_read(here::here('NYC', 'nyc.shp'), quiet = TRUE)
 nycmap = st_transform(nyc_map, crs = 4326)
 ```
 
-Here we investigate features and the overall accessibility of the stations in order to gain insights how accessible NYC subway stations are.
+Here, we investigate various features and overall accessibility levels of subway stations to gain insight into how accessible NYC’s subway stations truly are.
 
 ### ADA compliances
 
@@ -59,7 +59,7 @@ subway_cleaned %>%
 
 ```
 
-`ada` compliance ensures that individuals with disabilities can safely and easily access subway stations. In the plot, each dot represent a station. We can tell that NYC's stations do not perform well on this issue...
+`ada` compliance ensures that individuals with disabilities can safely and easily access subway stations. In the accompanying plot, each dot represents a station, and we can see that NYC’s stations generally do not perform well in terms of ADA compliance...
 
 ### Free Cross Over
 
@@ -81,7 +81,7 @@ subway_cleaned %>%
   labs(color = "Free Crossover")
 ```
 
-As the most complex subway system in the world, however, NYC Subway provides `free_crossover` for most of its stations.With this understanding of both the shortcomings and strengths in terms of ADA compliance and free crossovers, we now turn our attention to evaluating the overall accessibility performance of NYC’s subway stations as a whole.
+As the most complex subway system in the world, however, the NYC Subway does provide free crossover points in most of its stations. With this understanding of both the weaknesses (ADA compliance) and strengths (free crossover points) in mind, we now turn our attention to evaluating the overall accessibility performance of the city’s subway stations.
 
 # How accessible stations are overall?
 
@@ -98,7 +98,7 @@ km_result <- clustering_data %>%
   kmodes(modes = 3)
 ```
 
-We cluster the overall accessibility in three groups(levels) with the features of accessibility inside the stations.
+We cluster the stations into three groups (levels) of overall accessibility based on their internal accessibility features.
 
 ```{r}
 clustering_data$.cluster <- factor(km_result$cluster)
@@ -134,7 +134,7 @@ plot_ly(
 
 ```
 
-From the plot, we can tell the stations with with highest accessibility is less likely to have neither `ada` nor `free_crossover`, and the lowest accessibility stations vice versa. Also, in the scenario where the stations only have `free_crossover`, the more accessible this station is, the less likely it will happen. However, most of the stations only have the basic amenities `free_crossover`.
+From the plot, we can see that stations with the highest accessibility levels are less likely to have both ADA compliance and `free_crossover` points, while the lowest accessibility stations are more likely to have neither. In scenarios where stations only offer `free_crossover`, the more accessible a station is overall, the less likely it is to only have that one feature. However, most of the stations only meet the basic amenity standard of providing free crossover.
 
 ```{r}
 # Define a Mode function
@@ -153,7 +153,7 @@ knitr::kable(cluster_profiles)
 
 ```
 
-As we display the result of our model, the all of the dominant features tend to be same across the clusters. This result happens due to the un-even distribution of these categorical variables, which can be reflected in our visualization section.
+As we display the results of our model, all dominant features tend to appear similar across the clusters. This outcome likely occurs due to the uneven distribution of certain categorical variables, as reflected in our visualization section.
 
 ```{r}
 clustering_data <- clustering_data %>% 
@@ -198,7 +198,7 @@ leaflet() |>
   
 ```
 
-Now, let's take a look at where high and low accesibility station reside in our city. It appears that the borough/area with high concentration of low accessibility stations are Downtown Manhhatan, Bronx, and Downtown Brooklyn.
+Next, we examine where high- and low-accessibility stations are located in the city. It appears that areas with a high concentration of low-accessibility stations include Downtown Manhattan, the Bronx, and Downtown Brooklyn.
 
 ### When considering restroom access,
 
@@ -215,6 +215,8 @@ subway_with_restroom <- subway_with_restroom %>%
    )
 ```
 
+
+We import data on subway stations along with information on their closest accessible restrooms. We then adjust the dataset to handle missing values and ensure that variables (`restroom_changing_stations`, `restroom_status`, `restroom_accessibility`, `restroom_open`) are suitable for k-modes clustering.
 
 ```{r}
 
@@ -245,6 +247,18 @@ cluster_merged_profiles <- clustering_merged_data %>%
 
 knitr::kable(cluster_merged_profiles)
 ```
+
+From the table of our model fitting result, we speculate that the `restroom_accessibility` has significant effect on the cluster result.
+
+```{r}
+clustering_merged_data %>%
+  group_by(.cluster, restroom_accessibility) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  arrange(.cluster, restroom_accessibility) %>% 
+  knitr::kable()
+```
+
+From the model’s results, we speculate that restroom_accessibility has a significant effect on the clustering outcomes. Most high-accessibility stations have fully accessible restrooms nearby, while medium- and low-accessibility stations often lack accessible restrooms or have missing data for those amenities. This finding supports our speculation that `restroom_accessibility` is a dominant factor in the model.
 
 ```{r}
 clustering_merged_data <- clustering_merged_data %>% 
@@ -286,3 +300,12 @@ leaflet() |>
   )
 ```
 
+The distribution plot also aligns with our earlier speculation.
+
+# Discussion
+
+- There are large proportion of variables in `subway_clean` are un-evenly distributed
+
+- In our analysis, we only include the restroom that is closest to each stations
+
+- One potential solution is to balance or reweight the data to reduce the impact of uneven distributions and incorporate multiple nearby restrooms into the analysis to gain a more comprehensive understanding of accessibility.
