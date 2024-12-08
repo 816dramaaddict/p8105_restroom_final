@@ -8,7 +8,7 @@ output:
 
 *Carie Wu (uni: kw3104 ), Rita Wang (uni: ryw2109), Megan Panier (uni: map2365), Minghe Wang (uni: mw3845) and Huiyan Ni (uni: hn2453)*
 
-![](images/restroom.pdf)
+![](Pictures/Restroom.jpeg)
 
 ## Motivation 
 

@@ -7,11 +7,7 @@ output:
 ---
 
 # Our Project 
-<div style="width: 100%; height: 300px; overflow: hidden; position: relative; margin-bottom: 20px;">
-  <img src="./Pictures/Restroom.jpeg" 
-      alt="Restroom Image"
-      style="width: 100%; height: 100%; object-fit: cover; position: absolute;">
-</div>
+![](Pictures/Restroom.jpeg)
 
 *Carie Wu (uni: kw3104 ), Rita Wang (uni: ryw2109), Megan Panier (uni: map2365), Minghe Wang (uni: mw3845) and Huiyan Ni (uni: hn2453)*
 
