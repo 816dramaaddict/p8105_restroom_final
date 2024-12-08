@@ -1,0 +1,29 @@
+name: "When Nature Calls on the Subway"
+output_dir: "."
+navbar:
+  left:
+    - text: "Home"
+      href: index.html
+      class: "btn btn-primary navbar-btn"
+    - text: "About"
+      menu:
+        - text: "Our Project"
+          href: our_project.html
+        - text: "Group Members"
+          href: group_members.html
+        - text: "Data Source"
+          href: data_source.html
+    - text: "Visualization"
+      href: visualization.html
+    - text: "Hot Spot Analysis"
+      href: Hotspot.html
+    - text: "ADA Prediction Model"
+      href: ADA-Prediction-Model.html
+  right:
+    - icon: fa-envelope fa-lg
+      href: mailto:p8105.restroom.final@gmail.com
+    - icon: fa-github fa-lg
+      href: https://github.com/816dramaaddict/p8105_restroom_final.github.io
+output:
+  html_document:
+    theme: spacelab
