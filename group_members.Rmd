@@ -19,5 +19,8 @@ My name is Megan Panier, and I am currently a second year graduate student in Ep
 
 # Minghe Wang
 
+Hello! I’m a current MS candidate in Biostatistics at the Columbia Mailman School of Public Health, building on a strong quantitative foundation from my mathematics degree at NYU. My interests lie at the intersection of machine learning and public health, particularly in understanding and improving health outcomes for underrepresented communities.
+
+
 # Huiyan Ni
 Hi! I am Huiyan Ni, a first-year graduate student in Biostatistics at Columbia University. I studied Data Analytics at Ohio State University for my undergraduate degree. After graduating from Mailman, I plan to work as a data analyst in a biology related field of study. 
