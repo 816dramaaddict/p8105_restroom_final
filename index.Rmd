@@ -17,7 +17,7 @@ output:
 Restrooms are a vital yet often overlooked component of public infrastructure, especially in bustling cities like New York. The content of this website examines restroom accessibility near NYC subway stations, focusing on potential associations between restroom availability, subway station characteristics, and accessibility features for individuals with disabilities.
 
 # Screencast
-[Watch the video on Google Drive](https://drive.google.com/drive/u/0/folders/11xhNoNnTDO300MmOXQi6Y4u6n4jssyeb)
+[Watch the video on Google Drive](https://drive.google.com/file/d/1b_bC1IUtU-m5urWbhKdH26POV38Q9zIC/view?usp=drive_link)
 
 # Plan Your Next Restroom Stop!
 
