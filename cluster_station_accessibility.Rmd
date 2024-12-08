@@ -153,7 +153,7 @@ knitr::kable(cluster_profiles)
 
 ```
 
-As we display the results of our model, all dominant features tend to appear similar across the clusters. This outcome likely occurs due to the uneven distribution of certain categorical variables, as reflected in our visualization section.
+As we display the results of our model, all dominant features tend to appear similar across the clusters. This outcome likely occurs due to the uneven distribution of certain categorical variables, as reflected in our [visualization](visualization.html) section.
 
 ```{r}
 clustering_data <- clustering_data %>% 
