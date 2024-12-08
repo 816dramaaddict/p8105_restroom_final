@@ -11,7 +11,7 @@
 
 
 
-<title>ADA Accessibility Prediction</title>
+<title>ADA-Prediction-Model</title>
 
 <script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -29,15 +29,9 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
-<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -222,73 +216,7 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
-<style type="text/css">
-.code-folding-btn { margin-bottom: 4px; }
-</style>
 
-
-
-<style type="text/css">
-
-#TOC {
-  margin: 25px 0px 20px 0px;
-}
-@media (max-width: 768px) {
-#TOC {
-  position: relative;
-  width: 100%;
-}
-}
-
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
-
-.toc-content {
-  padding-left: 30px;
-  padding-right: 40px;
-}
-
-div.main-container {
-  max-width: 1200px;
-}
-
-div.tocify {
-  width: 20%;
-  max-width: 260px;
-  max-height: 85%;
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  div.tocify {
-    width: 25%;
-  }
-}
-
-@media (max-width: 767px) {
-  div.tocify {
-    width: 100%;
-    max-width: none;
-  }
-}
-
-.tocify ul, .tocify li {
-  line-height: 20px;
-}
-
-.tocify-subheader .tocify-item {
-  font-size: 0.90em;
-}
-
-.tocify .list-group-item {
-  border-radius: 0px;
-}
-
-
-</style>
 
 
 
@@ -298,16 +226,6 @@ div.tocify {
 
 
 <div class="container-fluid main-container">
-
-
-<!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row">
-<div class="col-xs-12 col-sm-4 col-md-3">
-<div id="TOC" class="tocify">
-</div>
-</div>
-
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -335,13 +253,13 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="our_project.html">Our Project</a>
+      <a href="our_project.html">Introduction</a>
     </li>
     <li>
       <a href="group_members.html">Group Members</a>
     </li>
     <li>
-      <a href="data_source.html">Data Source</a>
+      <a href="data_source.html">Report</a>
     </li>
   </ul>
 </li>
@@ -378,359 +296,303 @@ div.tocify {
 
 <div id="header">
 
-<div class="btn-group pull-right float-right">
-<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
-<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
-<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
-<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
-</ul>
-</div>
 
 
-
-<h1 class="title toc-ignore">ADA Accessibility Prediction</h1>
 
 </div>
 
 
-<div id="introduction" class="section level1">
-<h1>Introduction</h1>
-<p>Ensuring ADA-accessible restrooms in NYC’s subway system is essential
-for inclusivity. This page highlights key factors influencing restroom
-accessibility, using predictive modeling to identify trends and
-opportunities for improvement.</p>
-<pre class="r"><code>restroom_subway_join = read_csv(here::here(&quot;./Data/cleaned_subway_restroom_data.csv&quot;))
-
-# Cleaning merged data
-restroom_subway_data = restroom_subway_join %&gt;%
-  dplyr::select(
-    restroom_accessibility,
-      # Dependent variable (ADA accessibility)
-    restroom_latitude, restroom_longitude,
-      # Restroom location features
-    restroom_changing_stations, restroom_open,
-      # Restroom other features
-    station_latitude, station_longitude,
-      # Subway station location features
-    entrance_type, staffing
-      # Subway station other features
-  ) %&gt;%
-  drop_na() %&gt;% 
-  mutate(
-    restroom_accessibility = as.factor(as.character(restroom_accessibility)), 
-      # str(restroom_subway_data$restroom_accessibility)
-        # confirming if restroom_accessibility is no longer ordered
-    restroom_accessibility = relevel(restroom_accessibility, ref = &quot;Not Accessible&quot;),
-    restroom_open = as.factor(restroom_open),
-    entrance_type = as.factor(entrance_type),
-    staffing = as.factor(staffing)
-  )</code></pre>
-<pre class="r"><code># Multinomial logistic regression model
-ada_model = multinom(restroom_accessibility ~ restroom_latitude + restroom_longitude +
-                       restroom_changing_stations + restroom_open +
-                       station_latitude + station_longitude + 
-                       entrance_type + staffing,
-                     data = restroom_subway_data)
-
-# Check the model summary
-summary(ada_model)</code></pre>
+<div id="ada-accessibility-prediction" class="section level1">
+<h1>ADA Accessibility Prediction</h1>
+<p>Rita Wang 2024-12-07</p>
 <p><strong>Model Summary Table</strong></p>
-<pre class="r"><code>table = head(broom::tidy(ada_model), 31)
-colnames(table) = c(&quot;Accessibility Level with Reference to No Accessibility&quot;, &quot;Predictors&quot;, &quot;Coefficients&quot;, &quot;Standard Error&quot;, &quot;Test Statistic&quot;, &quot;P-Value&quot;)
-knitr::kable(table)</code></pre>
 <table>
 <colgroup>
-<col width="40%" />
-<col width="20%" />
-<col width="9%" />
+<col width="22%" />
+<col width="28%" />
+<col width="13%" />
 <col width="11%" />
+<col width="15%" />
 <col width="11%" />
-<col width="7%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th align="left">Accessibility Level with Reference to No
-Accessibility</th>
-<th align="left">Predictors</th>
-<th align="right">Coefficients</th>
-<th align="right">Standard Error</th>
-<th align="right">Test Statistic</th>
-<th align="right">P-Value</th>
+<th align="left">y.level</th>
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left">Fully Accessible</td>
 <td align="left">(Intercept)</td>
-<td align="right">92.9114917</td>
-<td align="right">0.0039085</td>
-<td align="right">2.377177e+04</td>
+<td align="right">13.0932151</td>
+<td align="right">0.0127258</td>
+<td align="right">1.028876e+03</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="even">
 <td align="left">Fully Accessible</td>
 <td align="left">restroom_latitude</td>
-<td align="right">-8.4001461</td>
-<td align="right">1.0066631</td>
-<td align="right">-8.344546e+00</td>
+<td align="right">-44.5189861</td>
+<td align="right">3.6312052</td>
+<td align="right">-1.226011e+01</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="odd">
 <td align="left">Fully Accessible</td>
 <td align="left">restroom_longitude</td>
-<td align="right">-115.2389140</td>
-<td align="right">0.5542151</td>
-<td align="right">-2.079318e+02</td>
+<td align="right">-51.7360783</td>
+<td align="right">1.8590365</td>
+<td align="right">-2.782951e+01</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="even">
 <td align="left">Fully Accessible</td>
 <td align="left">restroom_changing_stations</td>
-<td align="right">1.6733944</td>
-<td align="right">0.5716090</td>
-<td align="right">2.927516e+00</td>
-<td align="right">0.0034168</td>
+<td align="right">0.6882738</td>
+<td align="right">1.3864191</td>
+<td align="right">4.964400e-01</td>
+<td align="right">0.6195840</td>
 </tr>
 <tr class="odd">
 <td align="left">Fully Accessible</td>
-<td align="left">restroom_openSeasonal</td>
-<td align="right">-42.3544707</td>
-<td align="right">0.2459127</td>
-<td align="right">-1.722338e+02</td>
+<td align="left">restroom_open.L</td>
+<td align="right">9.2583012</td>
+<td align="right">0.0089985</td>
+<td align="right">1.028876e+03</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="even">
 <td align="left">Fully Accessible</td>
-<td align="left">restroom_openYear Round</td>
-<td align="right">-41.3723349</td>
-<td align="right">0.2460286</td>
-<td align="right">-1.681607e+02</td>
+<td align="left">restroom_open.Q</td>
+<td align="right">5.3452827</td>
+<td align="right">0.0051953</td>
+<td align="right">1.028876e+03</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="odd">
 <td align="left">Fully Accessible</td>
 <td align="left">station_latitude</td>
-<td align="right">14.9062817</td>
-<td align="right">1.0044420</td>
-<td align="right">1.484036e+01</td>
+<td align="right">45.8506478</td>
+<td align="right">3.6059814</td>
+<td align="right">1.271516e+01</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="even">
 <td align="left">Fully Accessible</td>
 <td align="left">station_longitude</td>
-<td align="right">119.5123558</td>
-<td align="right">0.5523431</td>
-<td align="right">2.163734e+02</td>
+<td align="right">52.8993405</td>
+<td align="right">2.1331388</td>
+<td align="right">2.479883e+01</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="odd">
 <td align="left">Fully Accessible</td>
-<td align="left">entrance_typeEasement</td>
-<td align="right">0.5002370</td>
-<td align="right">0.9421223</td>
-<td align="right">5.309682e-01</td>
-<td align="right">0.5954408</td>
-</tr>
-<tr class="even">
-<td align="left">Fully Accessible</td>
-<td align="left">entrance_typeElevator</td>
-<td align="right">0.6176626</td>
-<td align="right">0.8038245</td>
-<td align="right">7.684048e-01</td>
-<td align="right">0.4422467</td>
-</tr>
-<tr class="odd">
-<td align="left">Fully Accessible</td>
-<td align="left">entrance_typeEscalator</td>
-<td align="right">87.0622346</td>
-<td align="right">NaN</td>
-<td align="right">NaN</td>
-<td align="right">NaN</td>
-</tr>
-<tr class="even">
-<td align="left">Fully Accessible</td>
-<td align="left">entrance_typeRamp</td>
-<td align="right">108.3883078</td>
+<td align="left">entrance_type4</td>
+<td align="right">19.2984366</td>
+<td align="right">0.5060878</td>
+<td align="right">3.813259e+01</td>
 <td align="right">0.0000000</td>
-<td align="right">6.421167e+16</td>
+</tr>
+<tr class="even">
+<td align="left">Fully Accessible</td>
+<td align="left">entrance_type5</td>
+<td align="right">25.2221681</td>
+<td align="right">0.3434136</td>
+<td align="right">7.344545e+01</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="odd">
 <td align="left">Fully Accessible</td>
-<td align="left">entrance_typeStair</td>
-<td align="right">0.5046200</td>
-<td align="right">0.4781002</td>
-<td align="right">1.055469e+00</td>
-<td align="right">0.2912109</td>
+<td align="left">entrance_type6</td>
+<td align="right">32.2458999</td>
+<td align="right">0.0000004</td>
+<td align="right">7.934958e+07</td>
+<td align="right">0.0000000</td>
 </tr>
 <tr class="even">
 <td align="left">Fully Accessible</td>
-<td align="left">staffingNONE</td>
-<td align="right">0.6300591</td>
-<td align="right">1.1563930</td>
-<td align="right">5.448486e-01</td>
-<td align="right">0.5858577</td>
+<td align="left">entrance_type7</td>
+<td align="right">15.9046967</td>
+<td align="right">0.2903154</td>
+<td align="right">5.478420e+01</td>
+<td align="right">0.0000000</td>
 </tr>
 <tr class="odd">
 <td align="left">Fully Accessible</td>
-<td align="left">staffingPART</td>
-<td align="right">152.4822242</td>
-<td align="right">1.0193174</td>
-<td align="right">1.495925e+02</td>
+<td align="left">staffing.L</td>
+<td align="right">3.5101394</td>
+<td align="right">0.8500843</td>
+<td align="right">4.129166e+00</td>
+<td align="right">0.0000364</td>
+</tr>
+<tr class="even">
+<td align="left">Fully Accessible</td>
+<td align="left">staffing.Q</td>
+<td align="right">-6.0055529</td>
+<td align="right">0.0063629</td>
+<td align="right">-9.438429e+02</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="odd">
+<td align="left">Fully Accessible</td>
+<td align="left">staffing.C</td>
+<td align="right">-8.1857815</td>
+<td align="right">0.2833614</td>
+<td align="right">-2.888813e+01</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="even">
 <td align="left">Partially Accessible</td>
 <td align="left">(Intercept)</td>
-<td align="right">16.9112188</td>
-<td align="right">0.0010260</td>
-<td align="right">1.648209e+04</td>
+<td align="right">16.8778559</td>
+<td align="right">0.0044028</td>
+<td align="right">3.833436e+03</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="odd">
 <td align="left">Partially Accessible</td>
 <td align="left">restroom_latitude</td>
-<td align="right">-162.9683448</td>
-<td align="right">2.7257228</td>
-<td align="right">-5.978904e+01</td>
-<td align="right">0.0000000</td>
+<td align="right">6.5977432</td>
+<td align="right">3.8282184</td>
+<td align="right">1.723450e+00</td>
+<td align="right">0.0848072</td>
 </tr>
 <tr class="even">
 <td align="left">Partially Accessible</td>
 <td align="left">restroom_longitude</td>
-<td align="right">-78.7419545</td>
-<td align="right">1.5026927</td>
-<td align="right">-5.240057e+01</td>
+<td align="right">-42.0984929</td>
+<td align="right">2.2360956</td>
+<td align="right">-1.882679e+01</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="odd">
 <td align="left">Partially Accessible</td>
 <td align="left">restroom_changing_stations</td>
-<td align="right">2.8240061</td>
-<td align="right">0.8612673</td>
-<td align="right">3.278896e+00</td>
-<td align="right">0.0010421</td>
+<td align="right">-0.2384599</td>
+<td align="right">1.4914359</td>
+<td align="right">-1.598861e-01</td>
+<td align="right">0.8729708</td>
 </tr>
 <tr class="even">
 <td align="left">Partially Accessible</td>
-<td align="left">restroom_openSeasonal</td>
-<td align="right">17.5419664</td>
-<td align="right">0.4306626</td>
-<td align="right">4.073251e+01</td>
+<td align="left">restroom_open.L</td>
+<td align="right">11.9344464</td>
+<td align="right">0.0031133</td>
+<td align="right">3.833436e+03</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="odd">
 <td align="left">Partially Accessible</td>
-<td align="left">restroom_openYear Round</td>
-<td align="right">15.4733561</td>
-<td align="right">0.4307614</td>
-<td align="right">3.592094e+01</td>
+<td align="left">restroom_open.Q</td>
+<td align="right">6.8903558</td>
+<td align="right">0.0017974</td>
+<td align="right">3.833436e+03</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="even">
 <td align="left">Partially Accessible</td>
 <td align="left">station_latitude</td>
-<td align="right">153.5534493</td>
-<td align="right">2.7266925</td>
-<td align="right">5.631491e+01</td>
-<td align="right">0.0000000</td>
+<td align="right">-6.4015063</td>
+<td align="right">3.8422657</td>
+<td align="right">-1.666076e+00</td>
+<td align="right">0.0956983</td>
 </tr>
 <tr class="odd">
 <td align="left">Partially Accessible</td>
 <td align="left">station_longitude</td>
-<td align="right">74.0310299</td>
-<td align="right">1.4957630</td>
-<td align="right">4.949383e+01</td>
+<td align="right">42.4556487</td>
+<td align="right">1.9936307</td>
+<td align="right">2.129564e+01</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="even">
 <td align="left">Partially Accessible</td>
-<td align="left">entrance_typeEasement</td>
-<td align="right">-85.3945187</td>
-<td align="right">0.0000000</td>
-<td align="right">-4.806803e+38</td>
+<td align="left">entrance_type4</td>
+<td align="right">-12.2163142</td>
+<td align="right">0.5058369</td>
+<td align="right">-2.415070e+01</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="odd">
 <td align="left">Partially Accessible</td>
-<td align="left">entrance_typeElevator</td>
-<td align="right">1.7824341</td>
-<td align="right">1.2280138</td>
-<td align="right">1.451477e+00</td>
-<td align="right">0.1466470</td>
+<td align="left">entrance_type5</td>
+<td align="right">-7.4878451</td>
+<td align="right">0.3434104</td>
+<td align="right">-2.180437e+01</td>
+<td align="right">0.0000000</td>
 </tr>
 <tr class="even">
 <td align="left">Partially Accessible</td>
-<td align="left">entrance_typeEscalator</td>
-<td align="right">-9.3618876</td>
+<td align="left">entrance_type6</td>
+<td align="right">-26.4956256</td>
 <td align="right">0.0000000</td>
-<td align="right">-1.184875e+42</td>
+<td align="right">-1.234779e+12</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="odd">
 <td align="left">Partially Accessible</td>
-<td align="left">entrance_typeRamp</td>
-<td align="right">-2.7207035</td>
-<td align="right">0.0000000</td>
-<td align="right">-1.601245e+94</td>
+<td align="left">entrance_type7</td>
+<td align="right">-17.8531214</td>
+<td align="right">0.2901591</td>
+<td align="right">-6.152873e+01</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="even">
 <td align="left">Partially Accessible</td>
-<td align="left">entrance_typeStair</td>
-<td align="right">-0.6829551</td>
-<td align="right">0.8339266</td>
-<td align="right">-8.189631e-01</td>
-<td align="right">0.4128075</td>
+<td align="left">staffing.L</td>
+<td align="right">-2.1867293</td>
+<td align="right">0.9164712</td>
+<td align="right">-2.386032e+00</td>
+<td align="right">0.0170313</td>
 </tr>
 <tr class="odd">
 <td align="left">Partially Accessible</td>
-<td align="left">staffingNONE</td>
-<td align="right">-103.1276445</td>
-<td align="right">0.0000000</td>
-<td align="right">-5.923353e+46</td>
+<td align="left">staffing.Q</td>
+<td align="right">19.3990161</td>
+<td align="right">0.0022014</td>
+<td align="right">8.812125e+03</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="even">
 <td align="left">Partially Accessible</td>
-<td align="left">staffingPART</td>
-<td align="right">158.3445423</td>
-<td align="right">1.0193174</td>
-<td align="right">1.553437e+02</td>
+<td align="left">staffing.C</td>
+<td align="right">7.4402576</td>
+<td align="right">0.3054904</td>
+<td align="right">2.435513e+01</td>
 <td align="right">0.0000000</td>
 </tr>
 </tbody>
 </table>
-<p>Based on this output, we see that the restroom location, ramp
-entrance types and partial staff at train stations are highly
-significant predictors of a public restroom being fully ADA accessible.
-For public restrooms that are partially ADA accessible, restroom
-location, ramp entrance types and no staff members at train stations are
-strong predictors. Variables such as easement entrance type, elevator
-entrance type, and stairs entrance type for full ADA accessibility have
-high p-values, indicating weak evidence of their association with a
-restroom being fully ADA accessible. Potential multicollinearity or
-insufficient data may have resulted in very large or null statistical
-values on escalator entrance type and ramp entrance type.</p>
-<pre class="r"><code>predicted_accessibility = predict(ada_model, restroom_subway_data)
-
-# Confusion Matrix to evaluate the model&#39;s performance
-table(Predicted = predicted_accessibility, Actual = restroom_subway_data$restroom_accessibility)
-
-# Calculate accuracy
-accuracy = mean(predicted_accessibility == restroom_subway_data$restroom_accessibility) * 100
-accuracy = print(paste(round(accuracy, digits = 2), &quot;%&quot;))</code></pre>
+<p><strong>Fully Accessible Model:</strong></p>
+<p><em>fully ADA accessible</em> = 13.09322 + (-44.518986 x
+restroom_latitude) + (-51.73608 x restroom_longitude) + (0.6882738 x
+restroom_changing_stations) + (9.258301 x restroom_open.L) + (5.345283 x
+restroom_open.Q) + (45.850648 x station_latitude) + (52.89934 x
+station_longitude) + (19.29844 x entrance_type4) + (25.222168 x
+entrance_type5) + (32.24590 x entrance_type6) + (15.90470 x
+entrance_type7) + (3.510139 x staffing.L) + (-6.005553 x staffing.Q) +
+(-8.185782 x staffing.C)</p>
+<p><strong>Partially Accessible Model:</strong></p>
+<p><em>partially ADA accessible</em> = 16.87786 + (6.597743 x
+restroom_latitude) + (-42.09849 x restroom_longitude) + (-0.2384599 x
+restroom_changing_stations) + (11.934446 x restroom_open.L) + (6.890356
+x restroom_open.Q) + (-6.401506 x station_latitude) + (42.45565 x
+station_longitude) + (-12.21631 x entrance_type4) + (-7.487845 x
+entrance_type5) + (-26.49563 x entrance_type6) + (-17.85312 x
+entrance_type7) + (-2.186729 x staffing.L) + (19.399016 x staffing.Q) +
+(7.440258 x staffing.C)</p>
 <p><strong>Accuracy:</strong></p>
 <p>When testing the prediction model on the public restroom and train
-station data, there is an approximate of 73.03 % accuracy, which may be
-due to outliers, missing data, or unequal distribution of data among
-different categories of a variable.</p>
+station data, there is an approximate of 87.218045112782 %.</p>
 </div>
 
 
 
-</div>
-</div>
 
 </div>
 
@@ -762,41 +624,7 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
-<script>
-$(document).ready(function () {
-  window.initializeCodeFolding("hide" === "show");
-});
-</script>
 
-<script>
-$(document).ready(function ()  {
-
-    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
-    $('.unlisted.unnumbered').addClass('toc-ignore')
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
