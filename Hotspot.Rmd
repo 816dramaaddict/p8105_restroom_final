@@ -3,6 +3,8 @@ title: "Hot Spot Analysis (Getis-Ord Gi)"
 output: 
   html_document:
     code_folding: hide
+    toc: true
+    toc_float: true
 ---
 
 ```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE, results = 'hide'}

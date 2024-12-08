@@ -19,6 +19,8 @@ navbar:
       href: Hotspot.html
     - text: "ADA Prediction Model"
       href: ADA-Prediction-Model.html
+    - text: "Cluster Stations"
+      href: cluster_station_accessibility.html
   right:
     - icon: fa-envelope fa-lg
       href: mailto:p8105.restroom.final@gmail.com
