@@ -1,0 +1,23 @@
+---
+title: "Group Members"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+*Carie Wu (uni: kw3104 ), Rita Wang (uni: ryw2109), Megan Panier (uni: map2365), Minghe Wang (uni: mw3845) and Huiyan Ni (uni: hn2453)*
+
+# Carie Wu 
+Hi everyone! I’m Carrie Wu, a second-year MPH student here at Columbia, focusing on Epidemiology with a certificate in Chronic Disease. I studied Biology and Psychology at Stony Brook University for my undergrad. Recently, I’ve been working on research around pediatric oral health disparities in Asian American communities. After graduation, I hope to continue working in research on health disparities for Asian Americans and advocate for creating a better, more equitable world.
+
+# Rita Wang
+Hello! My name is Rita Wang and I am a current second year graduate student in the Epi Department with a certificate in Applied Biostatistics. For undergrad, I went to SUNY Stony Brook University and double majored in AMS and Biology. After graduating from Mailman, I hope to become a data analyst while continuing my current job as secretary of Cover Bridge Corp. which is a health insurance agency based in NY. 
+
+# Megan Panier
+My name is Megan Panier, and I am currently a second year graduate student in Epidemiology at Columbia University. I am also a Visiting Graduate Student at the Broad Institute of MIT and Harvard, where I am engaged in research on sleep, proteomics, and dementia within the Center for Genomic Medicine. With a background in Biology and a research focus on neurodegenerative diseases, including Alzheimer’s, my work has explored the impact of γ-secretase modulators and BDNF on amyloid-β pathologies. Driven by my passion for translational neuroscience, aging, and neurodegeneration, I aim to contribute to this field through innovative, multidisciplinary research and plan to complete an advanced degree in Neuroscience by 2029.
+
+# Minghe Wang
+
+# Huiyan Ni
+Hi! I am Huiyan Ni, a first-year graduate student in Biostatistics at Columbia University. I studied Data Analytics at Ohio State University for my undergraduate degree. After graduating from Mailman, I plan to work as a data analyst in a biology related field of study. 
