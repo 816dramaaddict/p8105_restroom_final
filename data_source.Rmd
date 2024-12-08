@@ -1,0 +1,11 @@
+---
+title: "Data Source"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+# data source
+
+The data for our project was sourced from [NYC Open Data](https://data.cityofnewyork.us/City-Government/Public-Restrooms/i7jb-7jku/about_data) and the NYC Transit Data that was shared with the p8105 for homework assignment two. 
