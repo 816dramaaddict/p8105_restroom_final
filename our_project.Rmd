@@ -1,5 +1,5 @@
 ---
-title: "Our Project"
+title: "Introduction"
 output: 
   html_document:
     toc: true
@@ -33,3 +33,4 @@ As our project developed, we also considered:
 *How does proximity to subway entrances with ADA features, such as ramps or elevators, influence restroom accessibility?*
 
 *How does restroom availability correlate with operational hours or staffing levels?*
+

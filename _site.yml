@@ -7,11 +7,11 @@ navbar:
       class: "btn btn-primary navbar-btn"
     - text: "About"
       menu:
-        - text: "Our Project"
+        - text: "Introduction"
           href: our_project.html
         - text: "Group Members"
           href: group_members.html
-        - text: "Data Source"
+        - text: "Report"
           href: data_source.html
     - text: "Visualization"
       href: visualization_plot.html
