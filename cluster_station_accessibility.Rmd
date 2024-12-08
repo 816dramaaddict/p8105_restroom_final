@@ -290,7 +290,7 @@ leaflet() |>
                             "<br> Staffing:", staffing,
                             "<br> Entrance type:", entrance_type,
                             "<br> Free crossover:", free_crossover,
-                            "<br> Free crossover:", free_crossover,)) |>
+                            "<br> Restroom Accessibility:", restroom_accessibility)) |>
   addProviderTiles(providers$CartoDB.Positron) |>
   addLegend(
     "bottomright",
