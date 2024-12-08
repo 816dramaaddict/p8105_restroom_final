@@ -2,6 +2,7 @@
 title: "When Nature Calls on the Subway: Mapping NYC Restroom Accessibility"
 output: 
   html_document:
+    always_allow_html: true
     toc: true
     toc_float: true
 ---

@@ -1,6 +1,7 @@
 name: "When Nature Calls on the Subway"
 output_dir: "."
 navbar:
+  title: "Home"
   left:
     - text: "Home"
       href: index.html
