@@ -98,17 +98,45 @@ km_result <- clustering_data %>%
   kmodes(modes = 3)
 ```
 
+We cluster the overall accessibility in three groups(levels) with the features of accessibility inside the stations.
 
 ```{r}
 clustering_data$.cluster <- factor(km_result$cluster)
 
+scenario_counts <- clustering_data %>%
+  mutate(
+    scenario = case_when(
+      ada == "TRUE" & free_crossover == "TRUE" ~ "ADA=TRUE, Free=TRUE",
+      ada == "FALSE" & free_crossover == "FALSE" ~ "ADA=FALSE, Free=FALSE",
+      ada == "FALSE" & free_crossover == "TRUE" ~ "ADA=FALSE, Free=TRUE",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  filter(!is.na(scenario)) %>%
+  group_by(scenario, .cluster) %>%
+  summarise(n = n(), .groups = "drop")
 
-clustering_data %>%
-  group_by(.cluster, ada, free_crossover) %>%
-  summarise(n = n(), .groups = "drop") %>%
-  arrange(.cluster, ada, free_crossover) %>% 
-  knitr::kable()
+plot_ly(
+  data = scenario_counts,
+  x = ~scenario,
+  y = ~n,
+  color = ~.cluster,
+  type = "bar"
+) %>%
+  layout(
+    title = "Count of Stations by Scenario and Cluster",
+    xaxis = list(title = "Scenario"),
+    yaxis = list(title = "Count of Stations"),
+    barmode = "group",
+    bargap = 0.2
+  )
 
+
+```
+
+From the plot, we can tell the stations with with highest accessibility is less likely to have neither `ada` nor `free_crossover`, and the lowest accessibility stations vice versa. Also, in the scenario where the stations only have `free_crossover`, the more accessible this station is, the less likely it will happen. However, most of the stations only have the basic amenities `free_crossover`.
+
+```{r}
 # Define a Mode function
 Mode <- function(x) {
   ux <- unique(x)
@@ -125,6 +153,7 @@ knitr::kable(cluster_profiles)
 
 ```
 
+As we display the result of our model, the all of the dominant features tend to be same across the clusters. This result happens due to the un-even distribution of these categorical variables, which can be reflected in our visualization section.
 
 ```{r}
 clustering_data <- clustering_data %>% 
@@ -133,7 +162,9 @@ clustering_data <- clustering_data %>%
       .cluster == 1 ~ "High Accessibility",
       .cluster == 2 ~ "Medium Accessibility",
       .cluster == 3 ~ "Low Accessibility"
-    )
+    ),
+    accessibility_level = factor(accessibility_level, 
+                                 levels = c("High Accessibility", "Medium Accessibility", "Low Accessibility"))
   )
 
 pal <- leaflet::colorFactor(
@@ -167,6 +198,7 @@ leaflet() |>
   
 ```
 
+Now, let's take a look at where high and low accesibility station reside in our city. It appears that the borough/area with high concentration of low accessibility stations are Downtown Manhhatan, Bronx, and Downtown Brooklyn.
 
 ### When considering restroom access,
 
