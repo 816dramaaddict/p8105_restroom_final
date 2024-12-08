@@ -15,7 +15,7 @@ navbar:
         - text: "Data Source"
           href: data_source.html
     - text: "Visualization"
-      href: visualization_project.html
+      href: visualization_plot.html
     - text: "Hot Spot Analysis"
       href: Hotspot.html
     - text: "ADA Prediction Model"
