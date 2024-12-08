@@ -1,5 +1,5 @@
 ---
-title: "Data Source"
+title: "Report"
 output: 
   html_document:
     toc: true
@@ -46,9 +46,11 @@ The raw public restroom and train station dataset we utilized can be found [here
 
 * _restroom_status_: whether or not the restroom is operational
 
-* _MODZCTA_: zip code of NYC
+* _zip_shape_: contain the longitude and latitude boundaries of each zip code area in NYC
 
-* label: 
+* _density_: the calculated density of restroom within each zip code
+
+* _gi_star_: the output result of Getis-Ord Gi Analysis, it used to generate the hot spot map
 
 ## Exploratory Analysis
 
@@ -56,7 +58,8 @@ The raw public restroom and train station dataset we utilized can be found [here
 
 ## Additional Analysis
 
-:)
+Multiple logistic regression was performed to produce a prediction model that predicts the level of ADA accessibility in restrooms based on their features and associated subway station characteristics. Predictors used include restroom location type, restroom type, restroom changing stations, train station ADA features, train station staffing, and train station entrance type. Based on the prediction model, we see that the restroom location, ramp entrance types and partial staff at train stations are highly significant predictors of a public restroom being fully ADA accessible. For public restrooms that are partially ADA accessible, restroom location, ramp entrance types and no staff members at train stations are strong predictors. Variables such as easement entrance type, elevator entrance type, and stairs entrance type for full ADA accessibility have high p-values, indicating weak evidence of their association with a restroom being fully ADA accessible. Potential multicollinearity or insufficient data may have resulted in very large or null statistical values on escalator entrance type and ramp entrance type. When testing the prediction model on the public restroom and train station data, there is an approximate of "73.03%" accuracy, which may be due to outliers, missing data, or unequal distribution of data among different categories of a variable.
+
 
 ## References
 

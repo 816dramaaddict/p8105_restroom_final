@@ -80,7 +80,7 @@ table(Predicted = predicted_accessibility, Actual = restroom_subway_data$restroo
 
 # Calculate accuracy
 accuracy = mean(predicted_accessibility == restroom_subway_data$restroom_accessibility) * 100
-accuracy = print(paste(accuracy, "%"))
+accuracy = print(paste(round(accuracy, digits = 2), "%"))
 ```
 **Accuracy:**
 

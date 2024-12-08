@@ -11,7 +11,7 @@
 
 
 
-<title>Data Source</title>
+<title>Report</title>
 
 <script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -376,7 +376,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Data Source</h1>
+<h1 class="title toc-ignore">Report</h1>
 
 </div>
 
@@ -429,8 +429,12 @@ table is available in available public restroom, if so, in which
 stalls</p></li>
 <li><p><em>restroom_status</em>: whether or not the restroom is
 operational</p></li>
-<li><p><em>MODZCTA</em>: zip code of NYC</p></li>
-<li><p>label:</p></li>
+<li><p><em>zip_shape</em>: contain the longitude and latitude boundaries
+of each zip code area in NYC</p></li>
+<li><p><em>density</em>: the calculated density of restroom within each
+zip code</p></li>
+<li><p><em>gi_star</em>: the output result of Getis-Ord Gi Analysis, it
+used to generate the hot spot map</p></li>
 </ul>
 </div>
 <div id="exploratory-analysis" class="section level2">
@@ -439,7 +443,26 @@ operational</p></li>
 </div>
 <div id="additional-analysis" class="section level2">
 <h2>Additional Analysis</h2>
-<p>:)</p>
+<p>Multiple logistic regression was performed to produce a prediction
+model that predicts the level of ADA accessibility in restrooms based on
+their features and associated subway station characteristics. Predictors
+used include restroom location type, restroom type, restroom changing
+stations, train station ADA features, train station staffing, and train
+station entrance type. Based on the prediction model, we see that the
+restroom location, ramp entrance types and partial staff at train
+stations are highly significant predictors of a public restroom being
+fully ADA accessible. For public restrooms that are partially ADA
+accessible, restroom location, ramp entrance types and no staff members
+at train stations are strong predictors. Variables such as easement
+entrance type, elevator entrance type, and stairs entrance type for full
+ADA accessibility have high p-values, indicating weak evidence of their
+association with a restroom being fully ADA accessible. Potential
+multicollinearity or insufficient data may have resulted in very large
+or null statistical values on escalator entrance type and ramp entrance
+type. When testing the prediction model on the public restroom and train
+station data, there is an approximate of “73.03%” accuracy, which may be
+due to outliers, missing data, or unequal distribution of data among
+different categories of a variable.</p>
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>

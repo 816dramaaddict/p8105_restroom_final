@@ -320,12 +320,12 @@ div.tocify {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html"></a>
+      <a class="navbar-brand" href="index.html">Home</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Home</a>
+  <a href="index.html"></a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -346,13 +346,16 @@ div.tocify {
   </ul>
 </li>
 <li>
-  <a href="visualization_project.html">Visualization</a>
+  <a href="visualization_plot.html">Visualization</a>
 </li>
 <li>
   <a href="Hotspot.html">Hot Spot Analysis</a>
 </li>
 <li>
   <a href="ADA-Prediction-Model.html">ADA Prediction Model</a>
+</li>
+<li>
+  <a href="cluster_station_accessibility.html">Cluster Stations</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -716,12 +719,12 @@ table(Predicted = predicted_accessibility, Actual = restroom_subway_data$restroo
 
 # Calculate accuracy
 accuracy = mean(predicted_accessibility == restroom_subway_data$restroom_accessibility) * 100
-accuracy = print(paste(accuracy, &quot;%&quot;))</code></pre>
+accuracy = print(paste(round(accuracy, digits = 2), &quot;%&quot;))</code></pre>
 <p><strong>Accuracy:</strong></p>
 <p>When testing the prediction model on the public restroom and train
-station data, there is an approximate of 73.0337078651685 % accuracy,
-which may be due to outliers, missing data, or unequal distribution of
-data among different categories of a variable.</p>
+station data, there is an approximate of 73.03 % accuracy, which may be
+due to outliers, missing data, or unequal distribution of data among
+different categories of a variable.</p>
 </div>
 
 
