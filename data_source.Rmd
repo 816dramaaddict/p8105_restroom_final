@@ -6,6 +6,46 @@ output:
     toc_float: true
 ---
 
-# data source
+# Data Source
 
-The data for our project was sourced from [NYC Open Data](https://data.cityofnewyork.us/City-Government/Public-Restrooms/i7jb-7jku/about_data) and the NYC Transit Data that was shared with the p8105 for homework assignment two. 
+The data for our project was sourced from [NYC Open Data](https://data.cityofnewyork.us/City-Government/Public-Restrooms/i7jb-7jku/about_data) and the NYC Transit Data that was shared with the p8105 for homework assignment two.
+
+
+# Data Dictionary
+The raw public restroom and train station dataset we utilized can be found [here](https://github.com/816dramaaddict/p8105_restroom_final.github.io/tree/main/Data), and the zip code data we utilized can be found [here](https://github.com/816dramaaddict/p8105_restroom_final.github.io/tree/main/NYC). Our cleaned merged dataset of the public restroom and train station datasets, available on our project [github](https://github.com/816dramaaddict/p8105_restroom_final.github.io/tree/main/Data), has 356 observations. The following are the variables that are used for this project:
+
+* _line_: train station line
+
+* _station_name_: name of the train station
+
+* _station_latitude_: latitude of the train station
+
+* _station_longitude_: longitude of the train station
+
+* _entrance_type_: type of train station entrance (ex: stairs and ramp)
+
+* _staffing_: the level of staff members on site at the train station
+
+* _station_location_: latitude and longitude coordinate of the station
+
+* _facility_name_: location name of the public restroom
+
+* _location_type_: type of location the public restroom is located at
+
+* _restroom_type_: type of restroom
+
+* _restroom_latitude_: latitude of the public restroom
+
+* _restroom_longitude_: longitude of the public restroom
+
+* _restroom_open_: level to which the public restroom is open form (ex: seasonally opened or year round)
+
+* _restroom_accessibility_: level of ADA accessibility of the facility where the public restroom is located
+
+* _restroom_changing_stations_: whether or not a changing table is available in available public restroom, if so, in which stalls
+
+* _restroom_status_: whether or not the restroom is operational
+
+* _MODZCTA_: zip code of NYC
+
+* label: 

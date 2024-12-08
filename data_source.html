@@ -316,12 +316,12 @@ div.tocify {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html"></a>
+      <a class="navbar-brand" href="index.html">Home</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Home</a>
+  <a href="index.html"></a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -342,13 +342,16 @@ div.tocify {
   </ul>
 </li>
 <li>
-  <a href="visualization.html">Visualization</a>
+  <a href="visualization_plot.html">Visualization</a>
 </li>
 <li>
   <a href="Hotspot.html">Hot Spot Analysis</a>
 </li>
 <li>
   <a href="ADA-Prediction-Model.html">ADA Prediction Model</a>
+</li>
+<li>
+  <a href="cluster_station_accessibility.html">Cluster Stations</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -379,11 +382,57 @@ div.tocify {
 
 
 <div id="data-source" class="section level1">
-<h1>data source</h1>
+<h1>Data Source</h1>
 <p>The data for our project was sourced from <a
 href="https://data.cityofnewyork.us/City-Government/Public-Restrooms/i7jb-7jku/about_data">NYC
 Open Data</a> and the NYC Transit Data that was shared with the p8105
 for homework assignment two.</p>
+</div>
+<div id="data-dictionary" class="section level1">
+<h1>Data Dictionary</h1>
+<p>The raw public restroom and train station dataset we utilized can be
+found <a
+href="https://github.com/816dramaaddict/p8105_restroom_final.github.io/tree/main/Data">here</a>,
+and the zip code data we utilized can be found <a
+href="https://github.com/816dramaaddict/p8105_restroom_final.github.io/tree/main/NYC">here</a>.
+Our cleaned merged dataset of the public restroom and train station
+datasets, available on our project <a
+href="https://github.com/816dramaaddict/p8105_restroom_final.github.io/tree/main/Data">github</a>,
+has 356 observations. The following are the variables that are used for
+this project:</p>
+<ul>
+<li><p><em>line</em>: train station line</p></li>
+<li><p><em>station_name</em>: name of the train station</p></li>
+<li><p><em>station_latitude</em>: latitude of the train station</p></li>
+<li><p><em>station_longitude</em>: longitude of the train
+station</p></li>
+<li><p><em>entrance_type</em>: type of train station entrance (ex:
+stairs and ramp)</p></li>
+<li><p><em>staffing</em>: the level of staff members on site at the
+train station</p></li>
+<li><p><em>station_location</em>: latitude and longitude coordinate of
+the station</p></li>
+<li><p><em>facility_name</em>: location name of the public
+restroom</p></li>
+<li><p><em>location_type</em>: type of location the public restroom is
+located at</p></li>
+<li><p><em>restroom_type</em>: type of restroom</p></li>
+<li><p><em>restroom_latitude</em>: latitude of the public
+restroom</p></li>
+<li><p><em>restroom_longitude</em>: longitude of the public
+restroom</p></li>
+<li><p><em>restroom_open</em>: level to which the public restroom is
+open form (ex: seasonally opened or year round)</p></li>
+<li><p><em>restroom_accessibility</em>: level of ADA accessibility of
+the facility where the public restroom is located</p></li>
+<li><p><em>restroom_changing_stations</em>: whether or not a changing
+table is available in available public restroom, if so, in which
+stalls</p></li>
+<li><p><em>restroom_status</em>: whether or not the restroom is
+operational</p></li>
+<li><p><em>MODZCTA</em>: zip code of NYC</p></li>
+<li><p>label:</p></li>
+</ul>
 </div>
 
 
