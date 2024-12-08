@@ -6,7 +6,7 @@ output:
     toc: true
     toc_float: true
 ---
-```{r default_setting, include=FALSE}
+```{r default_setting, echo = FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(sf)
 library(ggplot2)
