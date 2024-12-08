@@ -6,12 +6,11 @@ output:
     toc_float: true
 ---
 
-# Data
-
+### Data
 The data for our project was sourced from [NYC Open Data](https://data.cityofnewyork.us/City-Government/Public-Restrooms/i7jb-7jku/about_data) and the NYC Transit Data that was shared with the p8105 for homework assignment two.
 
 
-## Data Dictionary
+### Data Dictionary
 The raw public restroom and train station dataset we utilized can be found [here](https://github.com/816dramaaddict/p8105_restroom_final.github.io/tree/main/Data), and the zip code data we utilized can be found [here](https://github.com/816dramaaddict/p8105_restroom_final.github.io/tree/main/NYC). Our cleaned merged dataset of the public restroom and train station datasets, available on our project [github](https://github.com/816dramaaddict/p8105_restroom_final.github.io/tree/main/Data), has 356 observations. The following are the variables that are used for this project:
 
 * _line_: train station line
@@ -52,15 +51,13 @@ The raw public restroom and train station dataset we utilized can be found [here
 
 * _gi_star_: the output result of Getis-Ord Gi Analysis, it used to generate the hot spot map
 
-## Exploratory Analysis
-
+### Exploratory Analysis
 The Hot Spot Analysis (Getis-Ord Gi)* map provides a spatial statistical view of restroom density across ZIP codes in New York City. Significant hot spots (red areas) are observed in Manhattan, indicating clusters of high restroom accessibility. These areas likely reflect regions with concentrated commercial or tourist activity, necessitating a higher density of public restrooms. Neutral areas (light colors) suggest no significant clustering, representing ZIP codes with restroom density levels close to the average. These areas are predominantly in parts of Queens, Brooklyn, and the Bronx. Cold spots (gray areas) or regions with no data are concentrated in Staten Island and other peripheral regions, highlighting gaps in restroom density or missing data requiring further investigation.
 
-## Additional Analysis
-
+### Additional Analysis
 Multiple logistic regression was performed to produce a prediction model that predicts the level of ADA accessibility in restrooms based on their features and associated subway station characteristics. Predictors used include restroom location type, restroom type, restroom changing stations, train station ADA features, train station staffing, and train station entrance type. Based on the prediction model, we see that the restroom location, ramp entrance types and partial staff at train stations are highly significant predictors of a public restroom being fully ADA accessible. For public restrooms that are partially ADA accessible, restroom location, ramp entrance types and no staff members at train stations are strong predictors. Variables such as easement entrance type, elevator entrance type, and stairs entrance type for full ADA accessibility have high p-values, indicating weak evidence of their association with a restroom being fully ADA accessible. Potential multicollinearity or insufficient data may have resulted in very large or null statistical values on escalator entrance type and ramp entrance type. When testing the prediction model on the public restroom and train station data, there is an approximate of "73.03%" accuracy, which may be due to outliers, missing data, or unequal distribution of data among different categories of a variable.
 
-## Conclusion and Future Policies
+### Conclusion and Future Policies
 The data we present within our project, likely comes as no surprise to any seasoned New Yorker. We’ve all been there, wondering when the next restroom stop will be, debating whether it is wise to drink that cup of coffee…
 
 The issue of restroom availability in New York City is a multifaceted and pressing peril, especially for vulnerable populations such as those who are currently unhoused, people with disabilities, and individuals who menstruate. To address this problem and improve accessibility, several key actions should be taken:
@@ -79,8 +76,7 @@ The lack of publicly available restrooms in NYC is a recognized public health is
 
 The New York City Council's investigation, and [subsequent report]( https://council.nyc.gov/press/2024/09/05/2689/), of 102 public restrooms in city parks revealed that two-thirds were either closed or had significant health and safety issues. The report, titled "Nature's Call," highlighted widespread problems including unsanitary conditions, lack of basic amenities, and inadequate maintenance, underscoring the urgent need for improved funding and management of public restroom facilities in NYC parks.
 
-## References
-
+### References
   1. [https://data.cityofnewyork.us/City-Government/Public-Restrooms/i7jb-7jku](https://data.cityofnewyork.us/City-Government/Public-Restrooms/i7jb-7jku)
   2. [https://data.cityofnewyork.us/Health/Modified-Zip-Code-Tabulation-Areas-MODZCTA-/pri4-ifjk/about_data](https://data.cityofnewyork.us/Health/Modified-Zip-Code-Tabulation-Areas-MODZCTA-/pri4-ifjk/about_data)
   3. Fozouni, L., Buchheit, B., Walley, A. Y., Testa, M., & Chatterjee, A. (2019). Public restrooms and the opioid epidemic. American Journal of Public Health, 109(8), 1061-1062.
