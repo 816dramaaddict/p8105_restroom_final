@@ -6,7 +6,7 @@ output:
     toc_float: true
 ---
 
-# Data Source
+# Data
 
 The data for our project was sourced from [NYC Open Data](https://data.cityofnewyork.us/City-Government/Public-Restrooms/i7jb-7jku/about_data) and the NYC Transit Data that was shared with the p8105 for homework assignment two.
 
